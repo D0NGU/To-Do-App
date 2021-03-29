@@ -14,14 +14,13 @@ public class Task {
     private Category category;
 
     public Task(String name, String status, int priority, String description, LocalDateTime deadline,
-                LocalDateTime startDate, LocalDateTime finishDate, Category category) {
+                LocalDateTime startDate, Category category) {
         this.name = name;
         this.status = status;
         this.priority = priority;
         this.description = description;
         this.deadline = deadline;
         this.startDate = startDate;
-        this.finishDate = finishDate;
         this.category = category;
     }
 
