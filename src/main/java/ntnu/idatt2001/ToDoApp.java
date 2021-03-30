@@ -20,26 +20,29 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ToDoApp extends Application {
-    final ObservableList<Task> data = FXCollections.observableArrayList(
-            new Task("test","todo",1," ", LocalDateTime.of(LocalDate.of(2021,03,20),LocalTime.of(20,00)),
-                    LocalDateTime.now(), new Category("c", "")),
-            new Task("test2","todo",1," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
-                    ,LocalDateTime.now(),new Category("c", "")),
-            new Task("test3","todo",1," ",LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(10,00)),
-                    LocalDateTime.now(),new Category("c2", ""))
-    );
+    TaskList data2 = new TaskList();
+    ArrayList<Task> allTasks = data2.getAllTasks();
+    TableView tableViewToDo;
+    TableView tableViewDoing;
+    TableView tableViewDone;
+    TableView tableViewCategory;
+
 
     public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage stage) throws Exception {
+        //adding testdata to test the application
+        fillWithTestData();
 
         DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm");
 
+        //creating layoutpanes for the gui
         stage.setTitle("To-Do application");
         BorderPane pane = new BorderPane();
         pane.setPadding(new Insets(13,13,13,13));
@@ -51,43 +54,53 @@ public class ToDoApp extends Application {
         Scene mainScene = new Scene(pane, 1080, 720);
         Scene addTaskScene = new Scene(gpAddTask, 1080, 720);
 
+        //adding paddings for the visuals (more space between layoutpane and its content)
         gpTop.setPadding(new Insets(0,0,0,10));
         gpTaskList.setPadding(new Insets(10,10,10,10));
         gpCategory.setPadding(new Insets(50,20,20,20));
         gpAddTask.setPadding(new Insets(300,300,300,300));
 
+        //adding the spacing between all contents inn the gridpanes
         gpAddTask.setHgap(13);
         gpAddTask.setVgap(6);
         gpTop.setHgap(13);
         gpTop.setVgap(6);
 
+        //adding the title
         Text title = new Text("To-Do list");
         title.setFont(Font.font("Tohoma", FontWeight.EXTRA_BOLD, 40));
 
         Label test = new Label("test ");
 
+        //adding two buttons
         Button addTask = new Button("Add Task");
         Button sortBy = new Button("Sort by");
 
+        //adding the buttons and title to their gridpane
         gpTop.add(title,0,0,2,1);
         gpTop.add(addTask,3,1);
         gpTop.add(sortBy,4,1);
 
-        TableView tableViewToDo = new TableView();
+        //creating the table for the todo list
+        tableViewToDo = new TableView();
+        //creating the columns in the table
         TableColumn<Task, String> toDoListColumn = new TableColumn<>("To-do list");
         TableColumn<Task, String> deadlineColumn = new TableColumn<>("Deadline");
         TableColumn<Task, String> taskNameColumn = new TableColumn<>("Task");
+        //adding the deadline and taskname column to the todolist column to create nested columns
         toDoListColumn.getColumns().addAll(deadlineColumn,taskNameColumn);
+        //added all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
+        //setting what the values of the columns will be
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableViewToDo.getItems().add(new Task("test","todo",1," ",
-                LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(8,00)),LocalDateTime.now(),new Category("c", " ")));
+        //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+        //adding the table to the gridpane
         gpTaskList.add(tableViewToDo,1,1);
 
-        TableView tableViewDoing = new TableView();
+        //creating the table for the doing list
+        tableViewDoing = new TableView();
         TableColumn<Task, String> doingColumn = new TableColumn<>("Doing list");
         TableColumn<Task, String> deadlineColumn1 = new TableColumn<>("Deadline1");
         TableColumn<Task, String> taskNameColumn1 = new TableColumn<>("Task1");
@@ -95,12 +108,12 @@ public class ToDoApp extends Application {
         tableViewDoing.getColumns().addAll(doingColumn);
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableViewDoing.setItems(data);
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+        //adding the todolist table to gridpane
         gpTaskList.add(tableViewDoing,2,1);
 
-        TableView tableViewDone = new TableView();
+        //creating the table for done list
+        tableViewDone = new TableView();
         TableColumn<Task, String> doneColumn = new TableColumn<>("Done list");
         TableColumn<Task, String> deadlineColumn2 = new TableColumn<>("Deadline2");
         TableColumn<Task, String> taskNameColumn2 = new TableColumn<>("Task2");
@@ -108,26 +121,24 @@ public class ToDoApp extends Application {
         tableViewDone.getColumns().addAll(doneColumn);
         deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableViewDone.getItems().add(new Task("test3","todo",1," ",
-                LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(8,00)),LocalDateTime.now(),new Category("c2", "")));
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+        //adding the done table to gridpane
         gpTaskList.add(tableViewDone,3,1);
 
-
-        TableView tableViewCategory = new TableView();
+        //creating the category table
+        tableViewCategory = new TableView();
         TableColumn<Task, String> categoryColumn = new TableColumn<>("Categories");
         tableViewCategory.getColumns().addAll(categoryColumn);
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        //deciding what size the table will be
         tableViewCategory.setPrefSize(130,300);
         tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        gpCategory.add(tableViewCategory,0,0);
 
-        List<Category> categorylist = data.stream().map(Task::getCategory).distinct().collect(Collectors.toList());
-        ObservableList<Category> categoryList = FXCollections.observableList(categorylist);
-        tableViewCategory.setItems(categoryList);
+        //adding all the task data to the tables
+        update();
 
-        //after you press add task button the scene changes
-        //all of the variables that are displayed
+        //all of the variables that are displayed in add task scene
         addTask.setOnAction(actionEvent -> stage.setScene(addTaskScene));
         TextField taskNameField = new TextField("Task");
         TextField taskDescriptionField = new TextField("Task description");
@@ -148,13 +159,15 @@ public class ToDoApp extends Application {
         ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
         statusChoiceBox.getItems().addAll("to do", "doing");
         statusChoiceBox.setValue("to do");
-        //buttons that are displayed
+        //buttons that are displayed inn add task scene
         Button addButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
 
         HBox outsideBox = new HBox();
         outsideBox.setStyle("-fx-border-color: black");
-        //Layout of the scene
+
+
+        //Layout of the add task scene
         gpAddTask.add(outsideBox,0,0,7,10);
         gpAddTask.add(taskNameField,1,1,5,1);
         gpAddTask.add(taskDescriptionField,2,6,4,2);
@@ -164,11 +177,9 @@ public class ToDoApp extends Application {
         gpAddTask.add(deadlineDate,2,4);
         gpAddTask.add(deadLineTime,3,4);
 
-
         gpAddTask.add(new Label("Startdate"), 1,3);
         gpAddTask.add(startDateDate,2,3);
         gpAddTask.add(startDateTime,3,3);
-
 
         gpAddTask.add(new Label("Category:"),1,5);
         gpAddTask.add(taskCategoryField,2,5);
@@ -193,24 +204,23 @@ public class ToDoApp extends Application {
             }else if(priorityChoiceBox.getValue().equals("Low")){
                 priority = 1;
             }
-            tableViewToDo.getItems().add(new Task(taskNameField.getText(),statusChoiceBox.getValue(),priority,
+            data2.addTask(new Task(taskNameField.getText(),statusChoiceBox.getValue(),priority,
                     taskDescriptionField.getText(),LocalDateTime.of(deadlineDate.getValue(),LocalTime.parse(deadLineTime.getText()))
                     ,LocalDateTime.of(startDateDate.getValue(),LocalTime.parse(startDateTime.getText()))
                     , new Category(taskCategoryField.getText(),"")));
             stage.setScene(mainScene);
+            update();
         });
 
+        //what happens when you click on the cancelbutton
         cancelButton.setOnAction(actionEvent -> stage.setScene(mainScene));
 
-
-        gpCategory.add(tableViewCategory,0,0);
-
+        //adding all the gridpanes to the main layoutpane
         pane.setTop(gpTop);
         pane.setCenter(gpTaskList);
         pane.setLeft(gpCategory);
 
-        //gp.setGridLinesVisible(true);
-
+        //css code to remove scroll bar at the bottom of the tableviews
         /*.table-view .scroll-bar * {
                 -fx-min-width: 0;
         -fx-pref-width: 0;
@@ -220,9 +230,29 @@ public class ToDoApp extends Application {
         -fx-pref-height: 0;
         -fx-max-height: 0;}*/
 
+        //setting the scene and showing it
         stage.setScene(mainScene);
         stage.show();
 
     }
+
+    private void update(){
+        tableViewToDo.setItems(data2.getToDoList());
+        tableViewDoing.setItems(data2.getDoingList());
+        tableViewDone.setItems(data2.getDoneList());
+        List<Category> categorylist = allTasks.stream().map(Task::getCategory).distinct().collect(Collectors.toList());
+        ObservableList<Category> categoryList = FXCollections.observableList(categorylist);
+        tableViewCategory.setItems(categoryList);
+    }
+
+    private void fillWithTestData(){
+        data2.addTask(new Task("test","to do",1," ", LocalDateTime.of(LocalDate.of(2021,03,20),LocalTime.of(20,00)),
+                LocalDateTime.now(), new Category("c", "")));
+        data2.addTask(new Task("test2","doing",2," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
+                ,LocalDateTime.now(),new Category("c", "")));
+        data2.addTask(new Task("test3","done",1," ",LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(10,00)),
+                LocalDateTime.now(),new Category("c2", "")));
+    }
+
 }
 

@@ -1,41 +1,45 @@
 package ntnu.idatt2001;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TaskList {
-
-    private ArrayList<Task> toDoList;
-    private ArrayList<Task> doingList;
-    private ArrayList<Task> doneList;
+    private ArrayList<Task> allTasks;
+    //private ArrayList<Task> toDoList;
+    //private ArrayList<Task> doingList;
+    //private ArrayList<Task> doneList;
 
     public TaskList() {
-        toDoList = new ArrayList<>();
-        doingList = new ArrayList<>();
-        doneList = new ArrayList<>();
+        allTasks = new ArrayList<>();
     }
 
-    public ArrayList<Task> getToDoList() {
-        return toDoList;
+    public ArrayList<Task> getAllTasks() {
+        return allTasks;
     }
 
-    public ArrayList<Task> getDoingList() {
-        return doingList;
+    public ObservableList<Task> getToDoList() {
+        List<Task> toDoList = allTasks.stream().filter(t -> t.getStatus().equalsIgnoreCase("to do")).collect(Collectors.toList());
+        return FXCollections.observableList(toDoList);
     }
 
-    public ArrayList<Task> getDoneList() {
-        return doneList;
+    public ObservableList<Task> getDoingList() {
+        List<Task> doingList = allTasks.stream().filter(t -> t.getStatus().equalsIgnoreCase("doing")).collect(Collectors.toList());
+        return FXCollections.observableList(doingList);
+    }
+
+    public ObservableList<Task> getDoneList() {
+        List<Task> doneList = allTasks.stream().filter(t -> t.getStatus().equalsIgnoreCase("done")).collect(Collectors.toList());
+        return FXCollections.observableList(doneList);
     }
 
     public boolean addTask(Task task){
-        if (task.getStatus().equals("to do")){
-            toDoList.add(task);
-            return true;
-        } else if (task.getStatus().equals("doing")){
-            doingList.add(task);
-            return true;
-        } else if (task.getStatus().equals("done")){
-            doneList.add(task);
+        if(!(allTasks.contains(task))){
+            allTasks.add(task);
             return true;
         }
         return false;
@@ -48,34 +52,23 @@ public class TaskList {
     }
 
     public boolean removeTask(Task task){
-        if (task.getStatus().equals("to do")){
-            return toDoList.remove(task);
-        } else if (task.getStatus().equals("doing")){
-            return doingList.remove(task);
-        } else if (task.getStatus().equals("done")) {
-            return doneList.remove(task);
-        }
-        return false;
+        return allTasks.remove(task);
     }
 
     public void sortLists(String sortBy){
         if (sortBy.equals("deadline")){
-            toDoList.sort(Comparator.comparing(Task::getDeadline));
-            doingList.sort(Comparator.comparing(Task::getDeadline));
-            doneList.sort(Comparator.comparing(Task::getDeadline));
+            allTasks.sort(Comparator.comparing(Task::getDeadline));
         } else if (sortBy.equals("priority")){
-            toDoList.sort(Comparator.comparing(Task::getPriority));
-            doingList.sort(Comparator.comparing(Task::getPriority));
-            doneList.sort(Comparator.comparing(Task::getPriority));
+            allTasks.sort(Comparator.comparing(Task::getPriority));
         }
     }
 
     @Override
     public String toString() {
         return "TaskList{" +
-                "toDoList=" + toDoList +
-                ", doingList=" + doingList +
-                ", doneList=" + doneList +
+                "toDoList=" + getToDoList() +
+                ", doingList=" + getDoingList() +
+                ", doneList=" + getDoneList() +
                 '}';
     }
 }
