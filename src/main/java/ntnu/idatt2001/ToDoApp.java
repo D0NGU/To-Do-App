@@ -16,6 +16,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,8 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ToDoApp extends Application {
-    TaskList data2 = new TaskList();
-    ArrayList<Task> allTasks = data2.getAllTasks();
+    TaskList data = new TaskList();
     TableView tableViewToDo;
     TableView tableViewDoing;
     TableView tableViewDone;
@@ -204,7 +204,7 @@ public class ToDoApp extends Application {
             }else if(priorityChoiceBox.getValue().equals("Low")){
                 priority = 1;
             }
-            data2.addTask(new Task(taskNameField.getText(),statusChoiceBox.getValue(),priority,
+            data.addTask(new Task(taskNameField.getText(),statusChoiceBox.getValue(),priority,
                     taskDescriptionField.getText(),LocalDateTime.of(deadlineDate.getValue(),LocalTime.parse(deadLineTime.getText()))
                     ,LocalDateTime.of(startDateDate.getValue(),LocalTime.parse(startDateTime.getText()))
                     , new Category(taskCategoryField.getText(),"")));
@@ -237,22 +237,54 @@ public class ToDoApp extends Application {
     }
 
     private void update(){
-        tableViewToDo.setItems(data2.getToDoList());
-        tableViewDoing.setItems(data2.getDoingList());
-        tableViewDone.setItems(data2.getDoneList());
-        List<Category> categorylist = allTasks.stream().map(Task::getCategory).distinct().collect(Collectors.toList());
-        ObservableList<Category> categoryList = FXCollections.observableList(categorylist);
-        tableViewCategory.setItems(categoryList);
+        tableViewToDo.setItems(data.getToDoList());
+        tableViewDoing.setItems(data.getDoingList());
+        tableViewDone.setItems(data.getDoneList());
+        List<Category> categoryList = data.getAllTasks().stream().map(Task::getCategory).distinct().collect(Collectors.toList());
+        ObservableList<Category> categoryObservableList = FXCollections.observableList(categoryList);
+        tableViewCategory.setItems(categoryObservableList);
     }
 
     private void fillWithTestData(){
-        data2.addTask(new Task("test","to do",1," ", LocalDateTime.of(LocalDate.of(2021,03,20),LocalTime.of(20,00)),
+        data.addTask(new Task("test","to do",1," ", LocalDateTime.of(LocalDate.of(2021,03,20),LocalTime.of(20,00)),
                 LocalDateTime.now(), new Category("c", "")));
-        data2.addTask(new Task("test2","doing",2," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
+        data.addTask(new Task("test2","doing",2," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
                 ,LocalDateTime.now(),new Category("c", "")));
-        data2.addTask(new Task("test3","done",1," ",LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(10,00)),
+        data.addTask(new Task("test3","done",1," ",LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(10,00)),
                 LocalDateTime.now(),new Category("c2", "")));
     }
 
+    @Override
+    public void stop() throws Exception {
+        //Serializing the TaskList object "data" when application stops
+        //In other words: saving all the information in TaskList object to a file
+        try(FileOutputStream utstrom = new FileOutputStream("data.ser");
+            ObjectOutputStream ut = new ObjectOutputStream(utstrom)){
+            ut.writeObject(data);
+        }catch(IOException ioe){
+            System.out.println("IO-failure");
+        }catch (Exception e){
+            System.out.println("Something other than IO failure");
+        }
+        super.stop();
+    }
+
+    @Override
+    public void init() throws Exception {
+        //Opening the file containing the serialized TaskList object when the application starts
+        try (FileInputStream innstrom = new FileInputStream("data.ser");
+             ObjectInputStream inn = new ObjectInputStream(innstrom)) {
+            data = (TaskList) inn.readObject();
+        }catch(FileNotFoundException e){
+            //System.out.println("File not found");
+        }catch(EOFException e){
+            //System.out.println("File found but empty");
+        }catch(IOException ioe){
+            System.out.println("IO-failure");
+        }catch (Exception e){
+            System.out.println("Something other than IO failure");
+        }
+        super.init();
+    }
 }
 

@@ -3,7 +3,7 @@ package ntnu.idatt2001;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task {
+public class Task implements java.io.Serializable{
     private String name;
     private String status;
     private int priority;

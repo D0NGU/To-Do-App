@@ -2,7 +2,7 @@ package ntnu.idatt2001;
 
 import java.util.Objects;
 
-public class Category {
+public class Category implements java.io.Serializable{
     private String name;
     private String color;
     private boolean isShowing;
