@@ -3,11 +3,15 @@ package ntnu.idatt2001;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -15,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -45,6 +50,17 @@ public class ToDoApp extends Application {
     ChoiceBox<String> priorityChoiceBox= new ChoiceBox<>();
     ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
 
+    TextField taskNameField1 = new TextField();
+    TextField taskDescriptionField1 = new TextField();
+    TextField deadLineTime1 = new TextField();
+    TextField startDateTime1 = new TextField(LocalTime.now().format(timeFormat));
+    DatePicker deadlineDate1 = new DatePicker();
+    DatePicker startDateDate1 = new DatePicker(LocalDate.now());
+    TextField taskCategoryField1 = new TextField();
+    ChoiceBox<String> priorityChoiceBox1 = new ChoiceBox<>();
+    ChoiceBox<String> statusChoiceBox1 = new ChoiceBox<>();
+
+
     public static void main(String[] args) { launch(args); }
 
     @Override
@@ -52,6 +68,9 @@ public class ToDoApp extends Application {
         //adding testdata to test the application
         fillWithTestData();
 
+        //a stage to show the view task scene.
+        //Makes a new window
+        Stage stage2 = new Stage();
 
         //creating layoutpanes for the gui
         stage.setTitle("To-Do application");
@@ -61,21 +80,26 @@ public class ToDoApp extends Application {
         GridPane gpTaskList = new GridPane();
         GridPane gpCategory = new GridPane();
         GridPane gpAddTask = new GridPane();
+        GridPane gpViewTask = new GridPane();
 
-        Scene mainScene = new Scene(pane, 1080, 720);
-        Scene addTaskScene = new Scene(gpAddTask, 1080, 720);
+        Scene mainScene = new Scene(pane, 900, 600);
+        Scene addTaskScene = new Scene(gpAddTask, 450, 240);
+        Scene viewTaskScene = new Scene(gpViewTask, 450, 240);
 
         //adding paddings for the visuals (more space between layoutpane and its content)
         gpTop.setPadding(new Insets(0,0,0,10));
         gpTaskList.setPadding(new Insets(10,10,10,10));
         gpCategory.setPadding(new Insets(50,20,20,20));
-        gpAddTask.setPadding(new Insets(300,300,300,300));
+        gpAddTask.setPadding(new Insets(10,10,10,10));
+        gpViewTask.setPadding(new Insets(10,10,10,10));
 
         //adding the spacing between all contents inn the gridpanes
         gpAddTask.setHgap(13);
         gpAddTask.setVgap(6);
         gpTop.setHgap(13);
         gpTop.setVgap(6);
+        gpViewTask.setHgap(13);
+        gpViewTask.setVgap(6);
 
         //adding the title
         Text title = new Text("To-Do list");
@@ -96,7 +120,7 @@ public class ToDoApp extends Application {
         //creating the columns in the table
         TableColumn<Task, String> toDoListColumn = new TableColumn<>("To-do list");
         TableColumn<Task, String> deadlineColumn = new TableColumn<>("Deadline");
-        TableColumn<Task, String> taskNameColumn = new TableColumn<>("Task");
+        TableColumn taskNameColumn = new TableColumn<>("Task");
         //adding the deadline and taskname column to the todolist column to create nested columns
         toDoListColumn.getColumns().addAll(deadlineColumn,taskNameColumn);
         //added all the columns to the table
@@ -113,7 +137,7 @@ public class ToDoApp extends Application {
         tableViewDoing = new TableView();
         TableColumn<Task, String> doingColumn = new TableColumn<>("Doing list");
         TableColumn<Task, String> deadlineColumn1 = new TableColumn<>("Deadline1");
-        TableColumn<Task, String> taskNameColumn1 = new TableColumn<>("Task1");
+        TableColumn taskNameColumn1 = new TableColumn<>("Task1");
         doingColumn.getColumns().addAll(deadlineColumn1,taskNameColumn1);
         tableViewDoing.getColumns().addAll(doingColumn);
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
@@ -126,7 +150,7 @@ public class ToDoApp extends Application {
         tableViewDone = new TableView();
         TableColumn<Task, String> doneColumn = new TableColumn<>("Done list");
         TableColumn<Task, String> deadlineColumn2 = new TableColumn<>("Deadline2");
-        TableColumn<Task, String> taskNameColumn2 = new TableColumn<>("Task2");
+        TableColumn taskNameColumn2 = new TableColumn<>("Task2");
         doneColumn.getColumns().addAll(deadlineColumn2,taskNameColumn2);
         tableViewDone.getColumns().addAll(doneColumn);
         deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("deadline"));
@@ -149,7 +173,12 @@ public class ToDoApp extends Application {
         update();
 
         //add task button is pressed
-        addTask.setOnAction(actionEvent -> stage.setScene(addTaskScene));
+        addTask.setOnAction(actionEvent -> {
+            stage2.setScene(addTaskScene);
+            stage2.show();
+            resetAddTaskValues();
+                });
+
 
         addTaskScene(gpAddTask);
         //buttons that are displayed inn add task scene
@@ -174,7 +203,7 @@ public class ToDoApp extends Application {
                     taskDescriptionField.getText(),LocalDateTime.of(deadlineDate.getValue(),LocalTime.parse(deadLineTime.getText()))
                     ,LocalDateTime.of(startDateDate.getValue(),LocalTime.parse(startDateTime.getText()))
                     , new Category(taskCategoryField.getText(),"")));
-            stage.setScene(mainScene);
+            stage2.close();
             update();
             resetAddTaskValues();
 
@@ -182,7 +211,8 @@ public class ToDoApp extends Application {
 
         //what happens when you click on the cancel button
         cancelButton.setOnAction(actionEvent -> {
-            stage.setScene(mainScene);
+            stage2.close();
+            //stage.show();
             resetAddTaskValues();
         });
 
@@ -201,15 +231,146 @@ public class ToDoApp extends Application {
         -fx-pref-height: 0;
         -fx-max-height: 0;}*/
 
+        //Buttons save and delete are added to viewTaskScene
+        viewTaskScene(gpViewTask);
+        Button saveButton = new Button("Save");
+        Button deleteButton = new Button("Delete");
+        //Colors are added to the buttons
+        deleteButton.setStyle("-fx-background-color: red");
+        saveButton.setStyle("-fx-background-color: lightgreen");
+
+        gpViewTask.add(saveButton,5,8);
+        gpViewTask.add(deleteButton,1,8);
+        GridPane.setHalignment(saveButton, HPos.RIGHT);
+        GridPane.setHalignment(deleteButton, HPos.LEFT);
+
+        //Handles the actions "View task", "Delete Task"
+        //"Save" button is yet to be implemented
+        //some code from http://java-buddy.blogspot.com/2013/05/detect-mouse-click-on-javafx-tableview.html?m=1
+        //implementing a method to allow customization of the cells in columns.
+        //Callback is an interface that implements a method "call"
+        // and the body of this method can be called on all cells in columns that have gotten this method.
+        Callback<TableColumn, TableCell> stringCellFactory =
+                p -> {
+                    //a class "MyStringTableCell" is implemented at the end of this page
+                    MyStringTableCell cell = new MyStringTableCell();
+                    //addEventFilter takes in 2 arguments:
+                    // 1) the action (mouse click)
+                    // 2) EventHandler which is directly implemented here with lambda
+                    cell.addEventFilter(MouseEvent.MOUSE_CLICKED, t -> {
+
+                        TableCell c = (TableCell) t.getSource();
+                        int index = c.getIndex();
+                        //check if the cell selected is in to-do column, doing column or done column.
+                        if (c.getTableView().getColumns().get(0) == tableViewToDo.getColumns().get(0)){
+                            //stores the task selected in a variable "tasktoView"
+                            Task taskToView = data.getToDoList().get(index);
+                            //this method fills in the text fields of the viewTaskScene with
+                            // the information of the selected task
+                            fillViewTask(taskToView);
+                            //opens a new window to view the selected task
+                            stage2.setScene(viewTaskScene);
+                            stage2.show();
+
+                            //deletes the task we are working with here (taskToView)
+                            // if the button "delete" is clicked
+                            deleteButton.setOnAction(actionEvent -> {
+                                data.removeTask(taskToView);
+                                //removes the task and returns to mainScene
+                                stage2.close();
+                                //updates the table after deleting a task
+                                update();
+                            });
+
+                            //after the code is written change to lambda expression
+                            saveButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent actionEvent) {
+                                    stage2.close();
+
+                                }
+                            });
+
+                        } else if (c.getTableView().getColumns().get(0) == tableViewDoing.getColumns().get(0)){
+                            stage2.setScene(viewTaskScene);
+                            Task taskToView = data.getDoingList().get(index);
+                            fillViewTask(taskToView);
+                            stage2.show();
+
+                            deleteButton.setOnAction(actionEvent -> {
+                                data.removeTask(taskToView);
+                                stage2.close();
+                                update();
+                            });
+
+                        } else if (c.getTableView().getColumns().get(0) == tableViewDone.getColumns().get(0)){
+                            stage2.setScene(viewTaskScene);
+                            Task taskToView = data.getDoneList().get(index);
+                            fillViewTask(taskToView);
+                            stage2.show();
+
+                            deleteButton.setOnAction(actionEvent -> {
+                                data.removeTask(taskToView);
+                                stage2.close();
+                                update();
+                            });
+                        }
+
+                    });
+                    return cell;
+                };
+
+        //cells in the to-do, doing and done columns will be able to perform the actions
+        // implemented in the stringCellFactory variable (view and delete tasks)
+        taskNameColumn.setCellFactory(stringCellFactory);
+        taskNameColumn1.setCellFactory(stringCellFactory);
+        taskNameColumn2.setCellFactory(stringCellFactory);
+
         //setting the scene and showing it
         stage.setScene(mainScene);
         stage.show();
 
     }
 
+    private GridPane viewTaskScene(GridPane gpViewTask){
+        HBox outsideBox = new HBox();
+        outsideBox.setStyle("-fx-border-color: black");
+        taskNameField1.setPromptText("Task name");
+        taskCategoryField1.setPromptText("Category");
+        taskDescriptionField1.setPromptText("Task description");
+        deadLineTime1.setPromptText("hh:mm");
+        deadLineTime1.setPrefWidth(70);
+        startDateTime1.setPrefWidth(70);
+        deadlineDate1.setPrefWidth(110);
+        startDateDate1.setPrefWidth(110);
+        taskCategoryField1.setPrefWidth(110);
+        priorityChoiceBox1.getItems().addAll("High", "Medium", "Low");
+        priorityChoiceBox1.setValue("High");
+        statusChoiceBox1.getItems().addAll("to do", "doing");
+        statusChoiceBox1.setValue("to do");
+
+        gpViewTask.add(outsideBox,0,0,7,10);
+        gpViewTask.add(taskNameField1,1,1,5,1);
+        gpViewTask.add(taskDescriptionField1,2,6,4,2);
+        gpViewTask.add(new Label("Description:"), 1,6);
+        gpViewTask.add(new Label("Deadline:"), 1,4);
+        gpViewTask.add(deadlineDate1,2,4);
+        gpViewTask.add(deadLineTime1,3,4);
+        gpViewTask.add(new Label("Startdate"), 1,3);
+        gpViewTask.add(startDateDate1,2,3);
+        gpViewTask.add(startDateTime1,3,3);
+        gpViewTask.add(new Label("Category:"),1,5);
+        gpViewTask.add(taskCategoryField1,2,5);
+        gpViewTask.add(new Label("Priority:"),4,3);
+        gpViewTask.add(priorityChoiceBox1,5,3);
+        gpViewTask.add(new Label("Status:"),4,4);
+        gpViewTask.add(statusChoiceBox1,5,4);
+
+        return gpViewTask;
+    }
+
     //method that creates add task scene
     private GridPane addTaskScene(GridPane gpAddTask){
-
 
         HBox outsideBox = new HBox();
         outsideBox.setStyle("-fx-border-color: black");
@@ -265,7 +426,7 @@ public class ToDoApp extends Application {
     }
 
     private void fillWithTestData(){
-        data.addTask(new Task("test","to do",1," ", LocalDateTime.of(LocalDate.of(2021,03,20),LocalTime.of(20,00)),
+        data.addTask(new Task("test","to do",1,"something to test ", LocalDateTime.of(LocalDate.of(2021,03,20), LocalTime.of(20,00)),
                 LocalDateTime.now(), new Category("c", "")));
         data.addTask(new Task("test2","doing",2," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
                 ,LocalDateTime.now(),new Category("c", "")));
@@ -273,13 +434,23 @@ public class ToDoApp extends Application {
                 LocalDateTime.now(),new Category("c2", "")));
     }
 
+    private void fillViewTask(Task task){
+        taskDescriptionField1.setText(task.getDescription());
+        taskNameField1.setText(task.getName());
+        taskCategoryField1.setText(task.getCategory().getName());
+        startDateTime1.setText(task.getStartDate().toLocalTime().format(timeFormat));
+        startDateDate1.setValue(task.getStartDate().toLocalDate());
+        deadlineDate1.setValue(task.getDeadline().toLocalDate());
+        deadLineTime1.setText(task.getDeadline().toLocalTime().format(timeFormat));
+    }
+
     @Override
     public void stop() throws Exception {
         //Serializing the TaskList object "data" when application stops
         //In other words: saving all the information in TaskList object to a file
-        try(FileOutputStream utstrom = new FileOutputStream("data.ser");
-            ObjectOutputStream ut = new ObjectOutputStream(utstrom)){
-            ut.writeObject(data);
+        try(FileOutputStream outputStream = new FileOutputStream("data.ser");
+            ObjectOutputStream out = new ObjectOutputStream(outputStream)){
+            out.writeObject(data);
         }catch(IOException ioe){
             System.out.println("IO-failure");
         }catch (Exception e){
@@ -291,9 +462,9 @@ public class ToDoApp extends Application {
     @Override
     public void init() throws Exception {
         //Opening the file containing the serialized TaskList object when the application starts
-        try (FileInputStream innstrom = new FileInputStream("data.ser");
-             ObjectInputStream inn = new ObjectInputStream(innstrom)) {
-            data = (TaskList) inn.readObject();
+        try (FileInputStream inputStream = new FileInputStream("data.ser");
+             ObjectInputStream in = new ObjectInputStream(inputStream)) {
+            data = (TaskList) in.readObject();
         }catch(FileNotFoundException e){
             //System.out.println("File not found");
         }catch(EOFException e){
@@ -304,6 +475,20 @@ public class ToDoApp extends Application {
             System.out.println("Something other than IO failure");
         }
         super.init();
+    }
+}
+//code from http://java-buddy.blogspot.com/2013/05/detect-mouse-click-on-javafx-tableview.html?m=1
+class MyStringTableCell extends TableCell<Task, String> {
+
+    @Override
+    public void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty ? null : getString());
+        setGraphic(null);
+    }
+
+    private String getString() {
+        return getItem() == null ? "" : getItem().toString();
     }
 }
 
