@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -50,6 +51,7 @@ public class ToDoApp extends Application {
     ChoiceBox<String> priorityChoiceBox= new ChoiceBox<>();
     ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
 
+    //Variables for show task scene
     TextField taskNameField1 = new TextField();
     TextField taskDescriptionField1 = new TextField();
     TextField deadLineTime1 = new TextField();
@@ -282,13 +284,17 @@ public class ToDoApp extends Application {
                                 update();
                             });
 
-                            //after the code is written change to lambda expression
-                            saveButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent actionEvent) {
-                                    stage2.close();
+                            //saves the editted informasjon of the task
+                            saveButton.setOnAction(actionEvent -> {
+                                //a help method to update the information of the task
+                                editTaskUpdate(taskToView);
 
-                                }
+                                //This will make the name of the task appear on the table at once
+                                // without having to reopen the app
+                                cell.updateItem(taskToView.getName(), false);
+
+                                stage2.close();
+                                update();
                             });
 
                         } else if (c.getTableView().getColumns().get(0) == tableViewDoing.getColumns().get(0)){
@@ -303,6 +309,14 @@ public class ToDoApp extends Application {
                                 update();
                             });
 
+                            saveButton.setOnAction(actionEvent -> {
+                                editTaskUpdate(taskToView);
+                                cell.updateItem(taskToView.getName(), false);
+
+                                stage2.close();
+                                update();
+                            });
+
                         } else if (c.getTableView().getColumns().get(0) == tableViewDone.getColumns().get(0)){
                             stage2.setScene(viewTaskScene);
                             Task taskToView = data.getDoneList().get(index);
@@ -311,6 +325,14 @@ public class ToDoApp extends Application {
 
                             deleteButton.setOnAction(actionEvent -> {
                                 data.removeTask(taskToView);
+                                stage2.close();
+                                update();
+                            });
+
+                            saveButton.setOnAction(actionEvent -> {
+                                editTaskUpdate(taskToView);
+                                cell.updateItem(taskToView.getName(), false);
+
                                 stage2.close();
                                 update();
                             });
@@ -329,6 +351,51 @@ public class ToDoApp extends Application {
         //setting the scene and showing it
         stage.setScene(mainScene);
         stage.show();
+
+    }
+
+    private void editTaskUpdate(Task task){
+        //checks what priority it needs to set
+        //this code is not working, need to find how to fix this.
+        // priority and status needs to be fixed
+        int priority = 1;
+        if(priorityChoiceBox.getValue().equals("High")){
+            priority = 3;
+        }else if(priorityChoiceBox.getValue().equals("Medium")){
+            priority = 2;
+        }else if(priorityChoiceBox.getValue().equals("Low")){
+            priority = 1;
+        }
+        task.setPriority(priority);
+
+        task.setName(taskNameField1.getText());
+        task.setDescription(taskDescriptionField1.getText());
+        task.setStatus(statusChoiceBox1.getValue());
+        task.setDeadline(LocalDateTime.of(deadlineDate1.getValue(),LocalTime.parse(deadLineTime1.getText())));
+        task.setStartDate(LocalDateTime.of(startDateDate1.getValue(),LocalTime.parse(startDateTime1.getText())));
+
+        //list of current categories
+        List<Category> categoryList = data.getAllTasks().stream().map(Task::getCategory).distinct().collect(Collectors.toList());
+
+        //checking if category exists from before
+        boolean categoryExists = false;
+        for (Category c: categoryList) {
+            if (taskCategoryField1.getText().equals(c.getName())){
+                //if category exist we update the task with it
+                categoryExists = true;
+                task.setCategory(c);
+            }
+        }
+
+        //if category name does not exist from before, we add the category to the list and update the task
+        if (categoryExists == false){
+            task.setCategory(new Category(taskCategoryField1.getText(), ""));
+            categoryList.add(new Category(taskCategoryField1.getText(), ""));
+        }
+
+        //update the table so that it shows all the categories
+        ObservableList<Category> categoryObservableList = FXCollections.observableList(categoryList);
+        tableViewCategory.setItems(categoryObservableList);
 
     }
 
