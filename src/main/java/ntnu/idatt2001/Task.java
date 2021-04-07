@@ -61,6 +61,9 @@ public class Task implements java.io.Serializable{
      * @param status - the new status
      */
     public void setStatus(String status) {
+        if(status.equalsIgnoreCase("done")){
+            finishDate = LocalDateTime.now();
+        }
         this.status = status;
     }
 
@@ -140,8 +143,8 @@ public class Task implements java.io.Serializable{
      * method to get the finishdate of the given task
      * @return the finishdate of the task
      */
-    public LocalDateTime getFinishDate() {
-        return finishDate;
+    public String getFinishDate() {
+        return finishDate.format(timeFormat);
     }
 
     /**

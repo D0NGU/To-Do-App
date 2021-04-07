@@ -65,6 +65,7 @@ public class ToDoApp extends Application {
     TextField deadLineTime1 = new TextField();
     TextField startDateTime1 = new TextField(LocalTime.now().format(timeFormat));
     DatePicker deadlineDate1 = new DatePicker();
+    DatePicker finishDate = new DatePicker();
     DatePicker startDateDate1 = new DatePicker(LocalDate.now());
     TextField taskCategoryField1 = new TextField();
     ChoiceBox<String> priorityChoiceBox1 = new ChoiceBox<>();
@@ -125,7 +126,9 @@ public class ToDoApp extends Application {
 
         //adding two buttons
         Button addTask = new Button("Add Task");
+        addTask.setStyle("-fx-background-color: #a3ffb3");
         Button sortBy = new Button("Sort by");
+        sortBy.setStyle("-fx-background-color: #86cffc");
 
         //adding the buttons and title to their gridpane
         gpTop.add(title, 0, 0, 2, 1);
@@ -184,8 +187,10 @@ public class ToDoApp extends Application {
         addButtonToTable("doing1");
         //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
+        //setting what the values of the columns will be
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
+        //making the table only show the columns that i added
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
         gpTaskList.add(tableViewDoing, 2, 1);
@@ -212,8 +217,10 @@ public class ToDoApp extends Application {
         addButtonToTable("done");
         //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
-        deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+        //setting what the values of the columns will be
+        deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("finishDate"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        //making the table only show the columns that i added
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
         gpTaskList.add(tableViewDone, 3, 1);
@@ -224,6 +231,7 @@ public class ToDoApp extends Application {
         tableViewCategory = new TableView();
         TableColumn<Task, String> categoryColumn = new TableColumn<>("Categories");
         tableViewCategory.getColumns().addAll(categoryColumn);
+        //setting what the values of the columns will be
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
         tableViewCategory.setPrefSize(130, 300);
@@ -246,6 +254,7 @@ public class ToDoApp extends Application {
         addTaskScene(gpAddTask);
         //buttons that are displayed inn add task scene
         Button addButton = new Button("Add");
+        addButton.setStyle("-fx-background-color: #a3ffb3");
         Button cancelButton = new Button("Cancel");
         cancelButton.setStyle("-fx-background-color: tomato");
         gpAddTask.add(addButton, 5, 8);
@@ -270,7 +279,6 @@ public class ToDoApp extends Application {
             stage2.close();
             update();
             resetAddTaskValues();
-
         });
 
         //what happens when you click on the cancel button
@@ -290,8 +298,8 @@ public class ToDoApp extends Application {
         saveButton = new Button("Save");
         deleteButton = new Button("Delete");
         //Colors are added to the buttons
-        deleteButton.setStyle("-fx-background-color: red");
         saveButton.setStyle("-fx-background-color: lightgreen");
+        deleteButton.setStyle("-fx-background-color: tomato");
 
         gpViewTask.add(saveButton, 5, 8);
         gpViewTask.add(deleteButton, 1, 8);
