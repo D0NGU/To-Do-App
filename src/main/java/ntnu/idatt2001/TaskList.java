@@ -72,19 +72,6 @@ public class TaskList implements java.io.Serializable{
     }
 
     /**
-     * method to change the status of one task
-     * @param task - the task that will have its status changed
-     * @param status - the new status to the task
-     * @return true if the task was successfully added, false otherwise
-     */
-    //consider removing this method
-    public boolean changeStatus(Task task, String status){
-        removeTask(task);
-        task.setStatus(status);
-        return addTask(task);
-    }
-
-    /**
      * method to remove a task from the given tasklist
      * @param task - the task that shall be removed
      * @return true if the task was successfully removed from the tasklist, false if otherwise
