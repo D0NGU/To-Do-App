@@ -1,6 +1,7 @@
 package ntnu.idatt2001;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,7 @@ public class Task implements java.io.Serializable{
     private LocalDateTime startDate;
     private LocalDateTime finishDate;
     private Category category;
+    DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-mm-dd'T'HH:mm");
 
     /**
      * constructor that creates a new task
