@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class for the application "To-Do-App"
+ */
 public class ToDoApp extends Application {
     TaskList data = new TaskList();
     TableView<Task> tableViewToDo;
@@ -71,6 +74,7 @@ public class ToDoApp extends Application {
     Button deleteButton;
     Button saveButton;
 
+    //to run the application
     public static void main(String[] args) { launch(args); }
 
     @Override
