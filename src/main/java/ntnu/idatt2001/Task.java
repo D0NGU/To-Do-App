@@ -17,7 +17,7 @@ public class Task implements java.io.Serializable{
     private LocalDateTime startDate;
     private LocalDateTime finishDate;
     private Category category;
-    DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-mm-dd'T'HH:mm");
+
 
     /**
      * constructor that creates a new task
@@ -143,8 +143,8 @@ public class Task implements java.io.Serializable{
      * method to get the finishdate of the given task
      * @return the finishdate of the task
      */
-    public String getFinishDate() {
-        return finishDate.format(timeFormat);
+    public LocalDateTime getFinishDate() {
+        return finishDate;
     }
 
     /**

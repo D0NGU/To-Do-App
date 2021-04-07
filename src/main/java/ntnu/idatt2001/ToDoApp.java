@@ -517,7 +517,7 @@ public class ToDoApp extends Application {
              ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(data);
         } catch (IOException ioe) {
-            System.out.println("IO-failure");
+            System.out.println(ioe);
         } catch (Exception e) {
             System.out.println("Something other than IO failure");
         }
