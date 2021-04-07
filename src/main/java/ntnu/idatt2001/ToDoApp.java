@@ -38,6 +38,7 @@ public class ToDoApp extends Application {
     TableView tableViewDoing;
     TableView tableViewDone;
     TableView tableViewCategory;
+    Task taskToView;
 
     //Variables for the add task scene
     //they are outside start method so it is possible to use them in private methods
@@ -74,9 +75,7 @@ public class ToDoApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        //adding testdata to test the application
-        fillWithTestData();
-
+        //fillWithTestData();
         //a stage to show the view task scene.
         //Makes a new window
         //Stage stage2 = new Stage();
@@ -314,8 +313,12 @@ public class ToDoApp extends Application {
 
         //check if the cell selected is in to-do column, doing column or done column.
         if (c.getTableView() == tableViewToDo) {
-            //stores the task selected in a variable "tasktoView"
-            Task taskToView = data.getToDoList().get(index);
+            taskToView = data.getToDoList().get(index);}
+        else if (c.getTableView() == tableViewDoing) {
+            taskToView = data.getDoingList().get(index);}
+        else if (c.getTableView() == tableViewDone) {
+            taskToView = data.getDoneList().get(index);
+        }
             //this method fills in the text fields of the viewTaskScene with
             // the information of the selected task
             fillViewTask(taskToView);
@@ -349,62 +352,7 @@ public class ToDoApp extends Application {
                 stage2.close();
                 update();
             });
-
-        } else if (c.getTableView() == tableViewDoing) {
-            stage2.setScene(viewTaskScene);
-            Task taskToView = data.getDoingList().get(index);
-            fillViewTask(taskToView);
-            stage2.show();
-
-            deleteButton.setOnAction(actionEvent -> {
-                data.removeTask(taskToView);
-                stage2.close();
-                update();
-            });
-
-            saveButton.setOnAction(actionEvent -> {
-                editTaskUpdate(taskToView);
-
-                if (cell instanceof MyStringTableCell){
-                    MyStringTableCell copy = (MyStringTableCell) cell;
-                    copy.updateIndex(index);
-                }else if (cell instanceof MyDeadlineTableCell){
-                    MyDeadlineTableCell copy = (MyDeadlineTableCell) cell;
-                    copy.updateIndex(index);
-                }
-
-                stage2.close();
-                update();
-            });
-
-        } else if (c.getTableView() == tableViewDone) {
-            stage2.setScene(viewTaskScene);
-            Task taskToView = data.getDoneList().get(index);
-            fillViewTask(taskToView);
-            stage2.show();
-
-            deleteButton.setOnAction(actionEvent -> {
-                data.removeTask(taskToView);
-                stage2.close();
-                update();
-            });
-
-            saveButton.setOnAction(actionEvent -> {
-                editTaskUpdate(taskToView);
-
-                if (cell instanceof MyStringTableCell){
-                    MyStringTableCell copy = (MyStringTableCell) cell;
-                    copy.updateIndex(index);
-                }else if (cell instanceof MyDeadlineTableCell){
-                    MyDeadlineTableCell copy = (MyDeadlineTableCell) cell;
-                    copy.updateIndex(index);
-                }
-
-                stage2.close();
-                update();
-            });
-        }
-    }
+            }
 
     private void editTaskUpdate(Task task){
         //checks what priority it needs to set
@@ -424,7 +372,6 @@ public class ToDoApp extends Application {
         task.setDeadline(LocalDateTime.of(deadlineDate1.getValue(),LocalTime.parse(deadLineTime1.getText())));
         task.setStartDate(LocalDateTime.of(startDateDate1.getValue(),LocalTime.parse(startDateTime1.getText())));
         task.setCategory(new Category(taskCategoryField1.getText(), ""));
-
     }
 
     private GridPane viewTaskScene(GridPane gpViewTask){
@@ -571,7 +518,7 @@ public class ToDoApp extends Application {
              ObjectInputStream in = new ObjectInputStream(inputStream)) {
             data = (TaskList) in.readObject();
         }catch(FileNotFoundException e){
-            //System.out.println("File not found");
+            //
         }catch(EOFException e){
             //System.out.println("File found but empty");
         }catch(IOException ioe){
