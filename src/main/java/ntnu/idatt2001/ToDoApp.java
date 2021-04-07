@@ -42,23 +42,26 @@ public class ToDoApp extends Application {
     TableView<Task> tableViewDone;
     TableView tableViewCategory;
     Task taskToView;
+    TableColumn<Task, String> toDoListColumn;
+    TableColumn<Task, String> doingColumn;
+    TableColumn<Task, String> doneColumn;
 
     //Variables for the add task scene
     //they are outside start method so it is possible to use them in private methods
     DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
     TextField taskNameField = new TextField();
-    TextField taskDescriptionField = new TextField();
+    TextArea taskDescriptionField = new TextArea();
     TextField deadLineTime = new TextField();
     TextField startDateTime = new TextField(LocalTime.now().format(timeFormat));
     DatePicker deadlineDate = new DatePicker();
     DatePicker startDateDate = new DatePicker(LocalDate.now());
     TextField taskCategoryField = new TextField();
-    ChoiceBox<String> priorityChoiceBox= new ChoiceBox<>();
+    ChoiceBox<String> priorityChoiceBox = new ChoiceBox<>();
     ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
 
     //Variables for show task scene
     TextField taskNameField1 = new TextField();
-    TextField taskDescriptionField1 = new TextField();
+    TextArea taskDescriptionField1 = new TextArea();
     TextField deadLineTime1 = new TextField();
     TextField startDateTime1 = new TextField(LocalTime.now().format(timeFormat));
     DatePicker deadlineDate1 = new DatePicker();
@@ -75,7 +78,9 @@ public class ToDoApp extends Application {
     Button saveButton;
 
     //to run the application
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -87,23 +92,23 @@ public class ToDoApp extends Application {
         //creating layoutpanes for the gui
         stage.setTitle("To-Do application");
         BorderPane pane = new BorderPane();
-        pane.setPadding(new Insets(13,13,13,13));
+        pane.setPadding(new Insets(13, 13, 13, 13));
         GridPane gpTop = new GridPane();
         GridPane gpTaskList = new GridPane();
         GridPane gpCategory = new GridPane();
         GridPane gpAddTask = new GridPane();
         GridPane gpViewTask = new GridPane();
 
-        Scene mainScene = new Scene(pane, 900, 600);
-        Scene addTaskScene = new Scene(gpAddTask, 450, 240);
-        viewTaskScene = new Scene(gpViewTask, 450, 240);
+        Scene mainScene = new Scene(pane, 1300, 600);
+        Scene addTaskScene = new Scene(gpAddTask, 460, 300);
+        viewTaskScene = new Scene(gpViewTask, 460, 300);
 
         //adding paddings for the visuals (more space between layoutpane and its content)
-        gpTop.setPadding(new Insets(0,0,0,10));
-        gpTaskList.setPadding(new Insets(10,10,10,10));
-        gpCategory.setPadding(new Insets(50,20,20,20));
-        gpAddTask.setPadding(new Insets(10,10,10,10));
-        gpViewTask.setPadding(new Insets(10,10,10,10));
+        gpTop.setPadding(new Insets(0, 0, 0, 10));
+        gpTaskList.setPadding(new Insets(10, 10, 10, 10));
+        gpCategory.setPadding(new Insets(50, 20, 20, 20));
+        gpAddTask.setPadding(new Insets(10, 10, 10, 10));
+        gpViewTask.setPadding(new Insets(10, 10, 10, 10));
 
         //adding the spacing between all contents inn the gridpanes
         gpAddTask.setHgap(13);
@@ -123,20 +128,30 @@ public class ToDoApp extends Application {
         Button sortBy = new Button("Sort by");
 
         //adding the buttons and title to their gridpane
-        gpTop.add(title,0,0,2,1);
-        gpTop.add(addTask,3,1);
-        gpTop.add(sortBy,4,1);
+        gpTop.add(title, 0, 0, 2, 1);
+        gpTop.add(addTask, 3, 1);
+        gpTop.add(sortBy, 4, 1);
 
-        //creating the table for the todo list
+        //creating the table for the to do list
         tableViewToDo = new TableView();
         //creating the columns in the table
-        //took away <Task, String> in order to make the stringCellFactory work
-        TableColumn<Task, String> toDoListColumn = new TableColumn<>("To-do list");
+        toDoListColumn = new TableColumn<>("To-do list");
         TableColumn deadlineColumn = new TableColumn<>("Deadline");
         TableColumn taskNameColumn = new TableColumn<>("Task");
+        //changing the width of each column
+        deadlineColumn.setPrefWidth(115);
+        taskNameColumn.setPrefWidth(170);
+        //making it so that the user cant move the columns around or resize them
+        toDoListColumn.setReorderable(false);
+        deadlineColumn.setResizable(false);
+        deadlineColumn.setReorderable(false);
+        taskNameColumn.setResizable(false);
+        taskNameColumn.setReorderable(false);
         //adding the deadline and taskname column to the todolist column to create nested columns
-        toDoListColumn.getColumns().addAll(deadlineColumn,taskNameColumn);
-        //added all the columns to the table
+        toDoListColumn.getColumns().addAll(deadlineColumn, taskNameColumn);
+        //adding the button columns to the to do table
+        addButtonToTable("to do");
+        //adding all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
@@ -144,35 +159,65 @@ public class ToDoApp extends Application {
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
-        gpTaskList.add(tableViewToDo,1,1);
+        gpTaskList.add(tableViewToDo, 1, 1);
+        //making the table editable
         tableViewToDo.setEditable(true);
 
         //creating the table for the doing list
         tableViewDoing = new TableView();
-        TableColumn<Task, String> doingColumn = new TableColumn<>("Doing list");
-        TableColumn deadlineColumn1 = new TableColumn<>("Deadline1");
-        TableColumn taskNameColumn1 = new TableColumn<>("Task1");
-        doingColumn.getColumns().addAll(deadlineColumn1,taskNameColumn1);
+        doingColumn = new TableColumn<>("Doing list");
+        TableColumn deadlineColumn1 = new TableColumn<>("Deadline");
+        TableColumn taskNameColumn1 = new TableColumn<>("Task");
+        //changing the width of each column
+        deadlineColumn1.setPrefWidth(115);
+        taskNameColumn1.setPrefWidth(170);
+        //making it so that the user cant move the columns around or resize the
+        deadlineColumn1.setResizable(false);
+        taskNameColumn1.setResizable(false);
+        doingColumn.setReorderable(false);
+        deadlineColumn1.setReorderable(false);
+        taskNameColumn1.setReorderable(false);
+        //adding the deadline and taskname column to the doing column to create nested columns
+        doingColumn.getColumns().addAll(deadlineColumn1, taskNameColumn1);
+        //adding the button columns to the doing table
+        addButtonToTable("doing2");
+        addButtonToTable("doing1");
+        //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
-        gpTaskList.add(tableViewDoing,2,1);
+        gpTaskList.add(tableViewDoing, 2, 1);
+        //making the table editable
         tableViewDoing.setEditable(true);
 
         //creating the table for done list
         tableViewDone = new TableView();
-        TableColumn<Task, String> doneColumn = new TableColumn<>("Done list");
-        TableColumn deadlineColumn2 = new TableColumn<>("Deadline2");
-        TableColumn taskNameColumn2 = new TableColumn<>("Task2");
-        doneColumn.getColumns().addAll(deadlineColumn2,taskNameColumn2);
+        doneColumn = new TableColumn<>("Done list");
+        TableColumn deadlineColumn2 = new TableColumn<>("Finish date");
+        TableColumn taskNameColumn2 = new TableColumn<>("Task");
+        //changing the width of each column
+        deadlineColumn2.setPrefWidth(115);
+        taskNameColumn2.setPrefWidth(170);
+        //making it so that the user cant move the columns around or resize the
+        deadlineColumn2.setResizable(false);
+        taskNameColumn2.setResizable(false);
+        doneColumn.setReorderable(false);
+        deadlineColumn2.setReorderable(false);
+        taskNameColumn2.setReorderable(false);
+        //adding the deadline and taskname column to the done column to create nested columns
+        doneColumn.getColumns().addAll(deadlineColumn2, taskNameColumn2);
+        //adding the button columns to the done table
+        addButtonToTable("done");
+        //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
         deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
-        gpTaskList.add(tableViewDone,3,1);
+        gpTaskList.add(tableViewDone, 3, 1);
+        //making the table editable
         tableViewDone.setEditable(true);
 
         //creating the category table
@@ -181,9 +226,11 @@ public class ToDoApp extends Application {
         tableViewCategory.getColumns().addAll(categoryColumn);
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
-        tableViewCategory.setPrefSize(130,300);
+        tableViewCategory.setPrefSize(130, 300);
+        //making the table only show the columns that i added
         tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        gpCategory.add(tableViewCategory,0,0);
+        //adding the category table to gridpane
+        gpCategory.add(tableViewCategory, 0, 0);
 
         //adding all the task data to the tables
         update();
@@ -193,32 +240,33 @@ public class ToDoApp extends Application {
             stage2.setScene(addTaskScene);
             stage2.show();
             resetAddTaskValues();
-                });
+        });
 
 
         addTaskScene(gpAddTask);
         //buttons that are displayed inn add task scene
         Button addButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        gpAddTask.add(addButton,5,8);
-        gpAddTask.add(cancelButton,1,8);
+        cancelButton.setStyle("-fx-background-color: tomato");
+        gpAddTask.add(addButton, 5, 8);
+        gpAddTask.add(cancelButton, 1, 8);
         GridPane.setHalignment(addButton, HPos.RIGHT);
 
         //the add button is pressed
         addButton.setOnAction(actionEvent -> {
             //checks what priority it needs to set
             int priority = 1;
-            if(priorityChoiceBox.getValue().equals("High")){
+            if (priorityChoiceBox.getValue().equals("High")) {
                 priority = 3;
-            }else if(priorityChoiceBox.getValue().equals("Medium")){
+            } else if (priorityChoiceBox.getValue().equals("Medium")) {
                 priority = 2;
-            }else if(priorityChoiceBox.getValue().equals("Low")){
+            } else if (priorityChoiceBox.getValue().equals("Low")) {
                 priority = 1;
             }
-            data.addTask(new Task(taskNameField.getText(),statusChoiceBox.getValue(),priority,
-                    taskDescriptionField.getText(),LocalDateTime.of(deadlineDate.getValue(),LocalTime.parse(deadLineTime.getText()))
-                    ,LocalDateTime.of(startDateDate.getValue(),LocalTime.parse(startDateTime.getText()))
-                    , new Category(taskCategoryField.getText(),"")));
+            data.addTask(new Task(taskNameField.getText(), statusChoiceBox.getValue(), priority,
+                    taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadLineTime.getText()))
+                    , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText()))
+                    , new Category(taskCategoryField.getText(), "")));
             stage2.close();
             update();
             resetAddTaskValues();
@@ -245,15 +293,15 @@ public class ToDoApp extends Application {
         deleteButton.setStyle("-fx-background-color: red");
         saveButton.setStyle("-fx-background-color: lightgreen");
 
-        gpViewTask.add(saveButton,5,8);
-        gpViewTask.add(deleteButton,1,8);
+        gpViewTask.add(saveButton, 5, 8);
+        gpViewTask.add(deleteButton, 1, 8);
         GridPane.setHalignment(saveButton, HPos.RIGHT);
         GridPane.setHalignment(deleteButton, HPos.LEFT);
 
         //if one of the rows in one of the tables is clicked on, the method taskOnClick is run
-        tableViewToDo.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"toDo"));
-        tableViewDoing.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"doing"));
-        tableViewDone.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"done"));
+        tableViewToDo.setOnMouseClicked((MouseEvent event) -> taskOnClick(event, "toDo"));
+        tableViewDoing.setOnMouseClicked((MouseEvent event) -> taskOnClick(event, "doing"));
+        tableViewDone.setOnMouseClicked((MouseEvent event) -> taskOnClick(event, "done"));
 
         //setting the scene and showing it
         stage.setScene(mainScene);
@@ -261,21 +309,21 @@ public class ToDoApp extends Application {
 
     }
 
-    private void taskOnClick(MouseEvent event,String tableName){
+    private void taskOnClick(MouseEvent event, String tableName) {
         boolean notEmpty = false;
         //can decide how many clicks must happen before a window is opened
-        if (event.getClickCount() >= 1) {
+        if (event.getClickCount() > 1) {
             //checking whether the table clicked on is empty, because then no window should be shown
-            if (tableViewToDo.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("toDo")){
+            if (tableViewToDo.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("toDo")) {
                 notEmpty = true;
-            }else if(tableViewDoing.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("doing")){
+            } else if (tableViewDoing.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("doing")) {
                 notEmpty = true;
-            }else if(tableViewDone.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("done")){
+            } else if (tableViewDone.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("done")) {
                 notEmpty = true;
             }
 
-            //if window is not empty, then the user clicked on a task
-            if(!notEmpty) {
+            //if table is not empty, then the user clicked on a task
+            if (!notEmpty) {
                 if (tableName.equalsIgnoreCase("toDo")) {
                     taskToView = tableViewToDo.getSelectionModel().getSelectedItem();
                 } else if (tableName.equalsIgnoreCase("doing")) {
@@ -309,14 +357,14 @@ public class ToDoApp extends Application {
         }
     }
 
-    private void editTaskUpdate(Task task){
+    private void editTaskUpdate(Task task) {
         //checks what priority it needs to set
         int priority = 1;
-        if(priorityChoiceBox.getValue().equals("High")){
+        if (priorityChoiceBox.getValue().equals("High")) {
             priority = 3;
-        }else if(priorityChoiceBox.getValue().equals("Medium")){
+        } else if (priorityChoiceBox.getValue().equals("Medium")) {
             priority = 2;
-        }else if(priorityChoiceBox.getValue().equals("Low")){
+        } else if (priorityChoiceBox.getValue().equals("Low")) {
             priority = 1;
         }
         task.setPriority(priority);
@@ -324,14 +372,13 @@ public class ToDoApp extends Application {
         task.setName(taskNameField1.getText());
         task.setDescription(taskDescriptionField1.getText());
         task.setStatus(statusChoiceBox1.getValue());
-        task.setDeadline(LocalDateTime.of(deadlineDate1.getValue(),LocalTime.parse(deadLineTime1.getText())));
-        task.setStartDate(LocalDateTime.of(startDateDate1.getValue(),LocalTime.parse(startDateTime1.getText())));
+        task.setDeadline(LocalDateTime.of(deadlineDate1.getValue(), LocalTime.parse(deadLineTime1.getText())));
+        task.setStartDate(LocalDateTime.of(startDateDate1.getValue(), LocalTime.parse(startDateTime1.getText())));
         task.setCategory(new Category(taskCategoryField1.getText(), ""));
     }
 
-    private GridPane viewTaskScene(GridPane gpViewTask){
+    private GridPane viewTaskScene(GridPane gpViewTask) {
         HBox outsideBox = new HBox();
-        outsideBox.setStyle("-fx-border-color: black");
         taskNameField1.setPromptText("Task name");
         taskCategoryField1.setPromptText("Category");
         taskDescriptionField1.setPromptText("Task description");
@@ -342,31 +389,30 @@ public class ToDoApp extends Application {
         startDateDate1.setPrefWidth(110);
         taskCategoryField1.setPrefWidth(110);
         priorityChoiceBox1.getItems().addAll("High", "Medium", "Low");
-        statusChoiceBox1.getItems().addAll("to do", "doing","done");
+        statusChoiceBox1.getItems().addAll("to do", "doing", "done");
 
-        gpViewTask.add(outsideBox,0,0,7,10);
-        gpViewTask.add(taskNameField1,1,1,5,1);
-        gpViewTask.add(taskDescriptionField1,2,6,4,2);
-        gpViewTask.add(new Label("Description:"), 1,6);
-        gpViewTask.add(new Label("Deadline:"), 1,4);
-        gpViewTask.add(deadlineDate1,2,4);
-        gpViewTask.add(deadLineTime1,3,4);
-        gpViewTask.add(new Label("Startdate"), 1,3);
-        gpViewTask.add(startDateDate1,2,3);
-        gpViewTask.add(startDateTime1,3,3);
-        gpViewTask.add(new Label("Category:"),1,5);
-        gpViewTask.add(taskCategoryField1,2,5);
-        gpViewTask.add(new Label("Priority:"),4,3);
-        gpViewTask.add(priorityChoiceBox1,5,3);
-        gpViewTask.add(new Label("Status:"),4,4);
-        gpViewTask.add(statusChoiceBox1,5,4);
+        gpViewTask.add(outsideBox, 0, 0, 7, 10);
+        gpViewTask.add(taskNameField1, 1, 1, 5, 1);
+        gpViewTask.add(taskDescriptionField1, 2, 6, 4, 2);
+        gpViewTask.add(new Label("Description:"), 1, 6);
+        gpViewTask.add(new Label("Deadline:"), 1, 4);
+        gpViewTask.add(deadlineDate1, 2, 4);
+        gpViewTask.add(deadLineTime1, 3, 4);
+        gpViewTask.add(new Label("Startdate"), 1, 3);
+        gpViewTask.add(startDateDate1, 2, 3);
+        gpViewTask.add(startDateTime1, 3, 3);
+        gpViewTask.add(new Label("Category:"), 1, 5);
+        gpViewTask.add(taskCategoryField1, 2, 5);
+        gpViewTask.add(new Label("Priority:"), 4, 3);
+        gpViewTask.add(priorityChoiceBox1, 5, 3);
+        gpViewTask.add(new Label("Status:"), 4, 4);
+        gpViewTask.add(statusChoiceBox1, 5, 4);
 
         return gpViewTask;
     }
 
     //method that creates add task scene
-    private GridPane addTaskScene(GridPane gpAddTask){
-
+    private GridPane addTaskScene(GridPane gpAddTask) {
         HBox outsideBox = new HBox();
         outsideBox.setStyle("-fx-border-color: black");
         taskNameField.setPromptText("Task name");
@@ -378,30 +424,32 @@ public class ToDoApp extends Application {
         deadlineDate.setPrefWidth(110);
         startDateDate.setPrefWidth(110);
         taskCategoryField.setPrefWidth(110);
+        taskDescriptionField.setPrefHeight(100);
         priorityChoiceBox.getItems().addAll("High", "Medium", "Low");
         priorityChoiceBox.setValue("High");
         statusChoiceBox.getItems().addAll("to do", "doing");
         statusChoiceBox.setValue("to do");
 
-        gpAddTask.add(outsideBox,0,0,7,10);
-        gpAddTask.add(taskNameField,1,1,5,1);
-        gpAddTask.add(taskDescriptionField,2,6,4,2);
-        gpAddTask.add(new Label("Description:"), 1,6);
-        gpAddTask.add(new Label("Deadline:"), 1,4);
-        gpAddTask.add(deadlineDate,2,4);
-        gpAddTask.add(deadLineTime,3,4);
-        gpAddTask.add(new Label("Startdate"), 1,3);
-        gpAddTask.add(startDateDate,2,3);
-        gpAddTask.add(startDateTime,3,3);
-        gpAddTask.add(new Label("Category:"),1,5);
-        gpAddTask.add(taskCategoryField,2,5);
-        gpAddTask.add(new Label("Priority:"),4,3);
-        gpAddTask.add(priorityChoiceBox,5,3);
-        gpAddTask.add(new Label("Status:"),4,4);
-        gpAddTask.add(statusChoiceBox,5,4);
+        gpAddTask.add(outsideBox, 0, 0, 7, 10);
+        gpAddTask.add(taskNameField, 1, 1, 5, 1);
+        gpAddTask.add(taskDescriptionField, 2, 6, 4, 2);
+        gpAddTask.add(new Label("Description:"), 1, 6);
+        gpAddTask.add(new Label("Deadline:"), 1, 4);
+        gpAddTask.add(deadlineDate, 2, 4);
+        gpAddTask.add(deadLineTime, 3, 4);
+        gpAddTask.add(new Label("Startdate"), 1, 3);
+        gpAddTask.add(startDateDate, 2, 3);
+        gpAddTask.add(startDateTime, 3, 3);
+        gpAddTask.add(new Label("Category:"), 1, 5);
+        gpAddTask.add(taskCategoryField, 2, 5);
+        gpAddTask.add(new Label("Priority:"), 4, 3);
+        gpAddTask.add(priorityChoiceBox, 5, 3);
+        gpAddTask.add(new Label("Status:"), 4, 4);
+        gpAddTask.add(statusChoiceBox, 5, 4);
         return gpAddTask;
     }
-    private void resetAddTaskValues(){
+
+    private void resetAddTaskValues() {
         taskDescriptionField.setText("");
         taskNameField.setText("");
         taskCategoryField.setText("");
@@ -411,7 +459,7 @@ public class ToDoApp extends Application {
         deadLineTime.setText("");
     }
 
-    private void update(){
+    private void update() {
         tableViewToDo.setItems(data.getToDoList());
         tableViewDoing.setItems(data.getDoingList());
         tableViewDone.setItems(data.getDoneList());
@@ -423,16 +471,18 @@ public class ToDoApp extends Application {
         tableViewDone.refresh();
     }
 
-    private void fillWithTestData(){
-        data.addTask(new Task("test","to do",1,"something to test ", LocalDateTime.of(LocalDate.of(2021,03,20), LocalTime.of(20,00)),
+    private void fillWithTestData() {
+        data.addTask(new Task("test", "to do", 1, "something to test ", LocalDateTime.of(LocalDate.of(2021, 03, 20), LocalTime.of(20, 00)),
                 LocalDateTime.now(), new Category("c", "")));
-        data.addTask(new Task("test2","doing",2," ",LocalDateTime.of(LocalDate.of(2021,03,25), LocalTime.of(8,00))
-                ,LocalDateTime.now(),new Category("c", "")));
-        data.addTask(new Task("test3","done",1," ",LocalDateTime.of(LocalDate.of(2021,03,23),LocalTime.of(10,00)),
-                LocalDateTime.now(),new Category("c2", "")));
+        data.addTask(new Task("test2", "doing", 2, " ", LocalDateTime.of(LocalDate.of(2021, 03, 25), LocalTime.of(8, 00))
+                , LocalDateTime.now(), new Category("c", "")));
+        Task donetask = new Task("test3", "done", 1, " ", LocalDateTime.of(LocalDate.of(2021, 03, 23), LocalTime.of(10, 00)),
+                LocalDateTime.now(), new Category("c2", ""));
+        donetask.setFinishDate(LocalDateTime.now());
+        data.addTask(donetask);
     }
 
-    private void fillViewTask(Task task){
+    private void fillViewTask(Task task) {
         taskDescriptionField1.setText(task.getDescription());
         taskNameField1.setText(task.getName());
         taskCategoryField1.setText(task.getCategory().getName());
@@ -441,11 +491,11 @@ public class ToDoApp extends Application {
         deadlineDate1.setValue(task.getDeadline().toLocalDate());
         deadLineTime1.setText(task.getDeadline().toLocalTime().format(timeFormat));
 
-        if (task.getPriority() == 1){
+        if (task.getPriority() == 1) {
             priorityChoiceBox1.setValue("Low");
-        } else if (task.getPriority() == 2){
+        } else if (task.getPriority() == 2) {
             priorityChoiceBox1.setValue("Medium");
-        } else if (task.getPriority() == 3){
+        } else if (task.getPriority() == 3) {
             priorityChoiceBox1.setValue("High");
         }
 
@@ -456,12 +506,12 @@ public class ToDoApp extends Application {
     public void stop() throws Exception {
         //Serializing the TaskList object "data" when application stops
         //In other words: saving all the information in TaskList object to a file
-        try(FileOutputStream outputStream = new FileOutputStream("data.ser");
-            ObjectOutputStream out = new ObjectOutputStream(outputStream)){
+        try (FileOutputStream outputStream = new FileOutputStream("data.ser");
+             ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(data);
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             System.out.println("IO-failure");
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Something other than IO failure");
         }
         super.stop();
@@ -473,15 +523,101 @@ public class ToDoApp extends Application {
         try (FileInputStream inputStream = new FileInputStream("data.ser");
              ObjectInputStream in = new ObjectInputStream(inputStream)) {
             data = (TaskList) in.readObject();
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             //
-        }catch(EOFException e){
+        } catch (EOFException e) {
             //System.out.println("File found but empty");
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             System.out.println("IO-failure");
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Something other than IO failure");
         }
         super.init();
     }
+
+    //method to create a tablecolumn that contains a button
+    //the methods take in the tablename: "to do", "doing1", "doing2", "done"
+    //"doing1" and "doing2" is because doing column requires two buttoncolumns
+    private void addButtonToTable(String tableName) {
+        //the table that will contain the button
+        TableColumn<Task, Void> colBtn = new TableColumn();
+        colBtn.setPrefWidth(40);
+        //making it not possible for user to resize the column or reorder it
+        colBtn.setResizable(false);
+        colBtn.setReorderable(false);
+
+        //creating a custom cellFactory, so it can contain a button
+        Callback<TableColumn<Task, Void>, TableCell<Task, Void>> cellFactory = new Callback<TableColumn<Task, Void>, TableCell<Task, Void>>() {
+            @Override
+            public TableCell<Task, Void> call(final TableColumn<Task, Void> param) {
+                final TableCell<Task, Void> cell = new TableCell<Task, Void>() {
+
+                    //button that pushes task to the right
+                    private final Button btn = new Button("->");
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            Task data = getTableView().getItems().get(getIndex());
+                            //checking what status the task is in, so that the status can be changed correctly
+                            //after clicking the -> button
+                            if(data.getStatus().equals("to do")){
+                                data.setStatus("doing");
+                            }else if(data.getStatus().equals("doing")){
+                                data.setStatus("done");
+                            }
+                            //updating the tasklist to contain the changed task
+                            update();
+                        });
+                    }
+
+                    //button that pushes task to the left
+                    private final Button btn2 = new Button("<-");
+                    {
+                        btn2.setOnAction((ActionEvent event) -> {
+                            Task data = getTableView().getItems().get(getIndex());
+                            //checking what status the task is in, so that the status can be changed correctly
+                            //after clicking the <- button
+                            if(data.getStatus().equals("doing")){
+                                data.setStatus("to do");
+                            }else if(data.getStatus().equals("done")){
+                                data.setStatus("doing");
+                            }
+                            //updating the tasklist to contain the changed task
+                            update();
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            //adding the -> button to only to do and doing column
+                            if(tableName.equals("to do") || tableName.equals("doing1")){
+                               setGraphic(btn);
+                            //adding the <- button to only doing and done column
+                            }else if(tableName.equals("doing2") || tableName.equals("done")){
+                                setGraphic(btn2);
+                            }
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        //setting the factory of colBtn to the custom cellfactory created
+        colBtn.setCellFactory(cellFactory);
+
+        //Sets the correct buttons to "to do", "doing" and "done" columns
+        if(tableName.equals("to do")){
+            toDoListColumn.getColumns().add(colBtn);
+        }else if(tableName.equals("doing1") || tableName.equals("doing2")){
+            doingColumn.getColumns().add(colBtn);
+        } else if(tableName.equals("done")) {
+            doneColumn.getColumns().add(colBtn);
+        }
+
+    }
+
 }
