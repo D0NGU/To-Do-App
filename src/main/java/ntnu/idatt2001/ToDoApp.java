@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 
 public class ToDoApp extends Application {
     TaskList data = new TaskList();
-    TableView tableViewToDo;
-    TableView tableViewDoing;
-    TableView tableViewDone;
+    TableView<Task> tableViewToDo;
+    TableView<Task> tableViewDoing;
+    TableView<Task> tableViewDone;
     TableView tableViewCategory;
     Task taskToView;
 
@@ -141,6 +141,7 @@ public class ToDoApp extends Application {
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
         gpTaskList.add(tableViewToDo,1,1);
+        tableViewToDo.setEditable(true);
 
         //creating the table for the doing list
         tableViewDoing = new TableView();
@@ -154,6 +155,7 @@ public class ToDoApp extends Application {
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
         gpTaskList.add(tableViewDoing,2,1);
+        tableViewDoing.setEditable(true);
 
         //creating the table for done list
         tableViewDone = new TableView();
@@ -167,6 +169,7 @@ public class ToDoApp extends Application {
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
         gpTaskList.add(tableViewDone,3,1);
+        tableViewDone.setEditable(true);
 
         //creating the category table
         tableViewCategory = new TableView();
@@ -261,7 +264,7 @@ public class ToDoApp extends Application {
         // and the body of this method can be called on all cells in columns that have gotten this method.
 
 
-        Callback<TableColumn, TableCell> stringCellFactory =
+        /*Callback<TableColumn, TableCell> stringCellFactory =
                 p -> {
                     //a class "MyStringTableCell" is implemented at the end of this page
                     MyStringTableCell cell = new MyStringTableCell();
@@ -297,7 +300,11 @@ public class ToDoApp extends Application {
 
         deadlineColumn.setCellFactory(deadlineCellFactory);
         deadlineColumn1.setCellFactory(deadlineCellFactory);
-        deadlineColumn2.setCellFactory(deadlineCellFactory);
+        deadlineColumn2.setCellFactory(deadlineCellFactory);*/
+
+        tableViewToDo.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"toDo"));
+        tableViewDoing.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"doing"));
+        tableViewDone.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"done"));
 
         //setting the scene and showing it
         stage.setScene(mainScene);
@@ -305,7 +312,44 @@ public class ToDoApp extends Application {
 
     }
 
-    private void viewTaskCellClick(MouseEvent t, Object cell){
+    private void taskOnClick(MouseEvent event,String tableName){
+        if (event.getClickCount() > 1) {
+            if (tableViewToDo.getSelectionModel().getSelectedItem() != null) {
+                if(tableName.equalsIgnoreCase("toDo")){
+                    taskToView = tableViewToDo.getSelectionModel().getSelectedItem();
+                }else if(tableName.equalsIgnoreCase("doing")){
+                    taskToView = tableViewDoing.getSelectionModel().getSelectedItem();
+                }else if(tableName.equalsIgnoreCase("done")){
+                    taskToView = tableViewDone.getSelectionModel().getSelectedItem();
+                }
+
+                fillViewTask(taskToView);
+                //opens a new window to view the selected task
+                stage2.setScene(viewTaskScene);
+                stage2.show();
+
+                //deletes the task we are working with here (taskToView)
+                // if the button "delete" is clicked
+                deleteButton.setOnAction(actionEvent -> {
+                    data.removeTask(taskToView);
+                    //removes the task and returns to mainScene
+                    stage2.close();
+                    //updates the table after deleting a task
+                    update();
+                });
+
+                //saves the edited information of the task
+                saveButton.setOnAction(actionEvent -> {
+                    //a help method to update the information of the task
+                    editTaskUpdate(taskToView);
+                    stage2.close();
+                    update();
+                });
+            }
+        }
+    }
+
+    /*private void viewTaskCellClick(MouseEvent t, Object cell){
         //the source of the cell the mouse clicked on
         TableCell c = (TableCell) t.getSource();
         //The index of the cell the user clicked
@@ -336,23 +380,23 @@ public class ToDoApp extends Application {
                 update();
             });
 
-            //saves the edited informasjon of the task
+            //saves the edited information of the task
             saveButton.setOnAction(actionEvent -> {
                 //a help method to update the information of the task
                 editTaskUpdate(taskToView);
 
-                if (cell instanceof MyStringTableCell){
+                /*if (cell instanceof MyStringTableCell){
                     MyStringTableCell copy = (MyStringTableCell) cell;
                     copy.updateIndex(index);
                 }else if (cell instanceof MyDeadlineTableCell){
                     MyDeadlineTableCell copy = (MyDeadlineTableCell) cell;
                     copy.updateIndex(index);
-                }
+                }*/
 
-                stage2.close();
-                update();
-            });
-            }
+                //stage2.close();
+                //update();
+            //});
+            //}
 
     private void editTaskUpdate(Task task){
         //checks what priority it needs to set
@@ -465,6 +509,9 @@ public class ToDoApp extends Application {
         List<Category> categoryList = data.getAllTasks().stream().map(Task::getCategory).distinct().collect(Collectors.toList());
         ObservableList<Category> categoryObservableList = FXCollections.observableList(categoryList);
         tableViewCategory.setItems(categoryObservableList);
+        tableViewToDo.refresh();
+        tableViewDoing.refresh();
+        tableViewDone.refresh();
     }
 
     private void fillWithTestData(){
@@ -530,7 +577,8 @@ public class ToDoApp extends Application {
     }
 }
 //code from http://java-buddy.blogspot.com/2013/05/detect-mouse-click-on-javafx-tableview.html?m=1
-class MyStringTableCell extends TableCell<Task, String> {
+
+/*class MyStringTableCell extends TableCell<Task, String> {
 
     @Override
     public void updateItem(String item, boolean empty) {
@@ -556,5 +604,5 @@ class MyDeadlineTableCell extends TableCell<Task, LocalDateTime> {
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
-}
+}*/
 
