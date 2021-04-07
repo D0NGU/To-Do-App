@@ -422,7 +422,6 @@ public class ToDoApp extends Application {
     //method that creates add task scene
     private GridPane addTaskScene(GridPane gpAddTask) {
         HBox outsideBox = new HBox();
-        outsideBox.setStyle("-fx-border-color: black");
         taskNameField.setPromptText("Task name");
         taskCategoryField.setPromptText("Category");
         taskDescriptionField.setPromptText("Task description");
