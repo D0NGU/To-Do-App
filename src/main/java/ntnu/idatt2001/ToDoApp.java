@@ -75,7 +75,7 @@ public class ToDoApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        //fillWithTestData();
+        fillWithTestData();
         //a stage to show the view task scene.
         //Makes a new window
         //Stage stage2 = new Stage();
@@ -233,16 +233,6 @@ public class ToDoApp extends Application {
         pane.setCenter(gpTaskList);
         pane.setLeft(gpCategory);
 
-        //css code to remove scroll bar at the bottom of the tableviews
-        /*.table-view .scroll-bar * {
-                -fx-min-width: 0;
-        -fx-pref-width: 0;
-        -fx-max-width: 0;
-
-        -fx-min-height: 0;
-        -fx-pref-height: 0;
-        -fx-max-height: 0;}*/
-
         //Buttons save and delete are added to viewTaskScene
         viewTaskScene(gpViewTask);
         saveButton = new Button("Save");
@@ -256,52 +246,7 @@ public class ToDoApp extends Application {
         GridPane.setHalignment(saveButton, HPos.RIGHT);
         GridPane.setHalignment(deleteButton, HPos.LEFT);
 
-        //Handles the actions "View task", "Delete Task"
-        //"Save" button is yet to be implemented
-        //some code from http://java-buddy.blogspot.com/2013/05/detect-mouse-click-on-javafx-tableview.html?m=1
-        //implementing a method to allow customization of the cells in columns.
-        //Callback is an interface that implements a method "call"
-        // and the body of this method can be called on all cells in columns that have gotten this method.
-
-
-        /*Callback<TableColumn, TableCell> stringCellFactory =
-                p -> {
-                    //a class "MyStringTableCell" is implemented at the end of this page
-                    MyStringTableCell cell = new MyStringTableCell();
-                            //addEventFilter takes in 2 arguments:
-                            // 1) the action (mouse click)
-                            // 2) EventHandler which is directly implemented here with lambda
-                            cell.addEventFilter(MouseEvent.MOUSE_CLICKED, t -> {
-                                viewTaskCellClick(t, cell);
-
-                            });
-                    return cell;
-                };
-
-        Callback<TableColumn, TableCell> deadlineCellFactory =
-                p -> {
-                    //a class "MyDeadlineTableCell" is implemented at the end of this page
-                    MyDeadlineTableCell cell = new MyDeadlineTableCell();
-                    //addEventFilter takes in 2 arguments:
-                    // 1) the action (mouse click)
-                    // 2) EventHandler which is directly implemented here with lambda
-                    cell.addEventFilter(MouseEvent.MOUSE_CLICKED, t -> {
-                        viewTaskCellClick(t, cell);
-
-                    });
-                    return cell;
-                };
-
-        //cells in the to-do, doing and done columns will be able to perform the actions
-        // implemented in the stringCellFactory variable (view and delete tasks)
-        taskNameColumn.setCellFactory(stringCellFactory);
-        taskNameColumn1.setCellFactory(stringCellFactory);
-        taskNameColumn2.setCellFactory(stringCellFactory);
-
-        deadlineColumn.setCellFactory(deadlineCellFactory);
-        deadlineColumn1.setCellFactory(deadlineCellFactory);
-        deadlineColumn2.setCellFactory(deadlineCellFactory);*/
-
+        //if one of the rows in one of the tables is clicked on, the method taskOnClick is run
         tableViewToDo.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"toDo"));
         tableViewDoing.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"doing"));
         tableViewDone.setOnMouseClicked((MouseEvent event) -> taskOnClick(event,"done"));
@@ -313,26 +258,37 @@ public class ToDoApp extends Application {
     }
 
     private void taskOnClick(MouseEvent event,String tableName){
-        if (event.getClickCount() > 1) {
-            if (tableViewToDo.getSelectionModel().getSelectedItem() != null) {
-                if(tableName.equalsIgnoreCase("toDo")){
+        boolean notEmpty = false;
+        //can decide how many clicks must happen before a window is opened
+        if (event.getClickCount() >= 1) {
+            //checking whether the table clicked on is empty, because then no window should be shown
+            if (tableViewToDo.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("toDo")){
+                notEmpty = true;
+            }else if(tableViewDoing.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("doing")){
+                notEmpty = true;
+            }else if(tableViewDone.getSelectionModel().getSelectedItem() == null && tableName.equalsIgnoreCase("done")){
+                notEmpty = true;
+            }
+
+            //if window is not empty, then the user clicked on a task
+            if(!notEmpty) {
+                if (tableName.equalsIgnoreCase("toDo")) {
                     taskToView = tableViewToDo.getSelectionModel().getSelectedItem();
-                }else if(tableName.equalsIgnoreCase("doing")){
+                } else if (tableName.equalsIgnoreCase("doing")) {
                     taskToView = tableViewDoing.getSelectionModel().getSelectedItem();
-                }else if(tableName.equalsIgnoreCase("done")){
+                } else if (tableName.equalsIgnoreCase("done")) {
                     taskToView = tableViewDone.getSelectionModel().getSelectedItem();
                 }
 
-                fillViewTask(taskToView);
                 //opens a new window to view the selected task
+                fillViewTask(taskToView);
                 stage2.setScene(viewTaskScene);
                 stage2.show();
 
-                //deletes the task we are working with here (taskToView)
-                // if the button "delete" is clicked
+                //deletes the task the user clicked on if the deletebutton is clicked
                 deleteButton.setOnAction(actionEvent -> {
-                    data.removeTask(taskToView);
                     //removes the task and returns to mainScene
+                    data.removeTask(taskToView);
                     stage2.close();
                     //updates the table after deleting a task
                     update();
@@ -348,55 +304,6 @@ public class ToDoApp extends Application {
             }
         }
     }
-
-    /*private void viewTaskCellClick(MouseEvent t, Object cell){
-        //the source of the cell the mouse clicked on
-        TableCell c = (TableCell) t.getSource();
-        //The index of the cell the user clicked
-        int index = c.getIndex();
-
-        //check if the cell selected is in to-do column, doing column or done column.
-        if (c.getTableView() == tableViewToDo) {
-            taskToView = data.getToDoList().get(index);}
-        else if (c.getTableView() == tableViewDoing) {
-            taskToView = data.getDoingList().get(index);}
-        else if (c.getTableView() == tableViewDone) {
-            taskToView = data.getDoneList().get(index);
-        }
-            //this method fills in the text fields of the viewTaskScene with
-            // the information of the selected task
-            fillViewTask(taskToView);
-            //opens a new window to view the selected task
-            stage2.setScene(viewTaskScene);
-            stage2.show();
-
-            //deletes the task we are working with here (taskToView)
-            // if the button "delete" is clicked
-            deleteButton.setOnAction(actionEvent -> {
-                data.removeTask(taskToView);
-                //removes the task and returns to mainScene
-                stage2.close();
-                //updates the table after deleting a task
-                update();
-            });
-
-            //saves the edited information of the task
-            saveButton.setOnAction(actionEvent -> {
-                //a help method to update the information of the task
-                editTaskUpdate(taskToView);
-
-                /*if (cell instanceof MyStringTableCell){
-                    MyStringTableCell copy = (MyStringTableCell) cell;
-                    copy.updateIndex(index);
-                }else if (cell instanceof MyDeadlineTableCell){
-                    MyDeadlineTableCell copy = (MyDeadlineTableCell) cell;
-                    copy.updateIndex(index);
-                }*/
-
-                //stage2.close();
-                //update();
-            //});
-            //}
 
     private void editTaskUpdate(Task task){
         //checks what priority it needs to set
@@ -431,9 +338,7 @@ public class ToDoApp extends Application {
         startDateDate1.setPrefWidth(110);
         taskCategoryField1.setPrefWidth(110);
         priorityChoiceBox1.getItems().addAll("High", "Medium", "Low");
-        priorityChoiceBox1.setValue("High");
-        statusChoiceBox1.getItems().addAll("to do", "doing");
-        statusChoiceBox1.setValue("to do");
+        statusChoiceBox1.getItems().addAll("to do", "doing","done");
 
         gpViewTask.add(outsideBox,0,0,7,10);
         gpViewTask.add(taskNameField1,1,1,5,1);
@@ -576,33 +481,3 @@ public class ToDoApp extends Application {
         super.init();
     }
 }
-//code from http://java-buddy.blogspot.com/2013/05/detect-mouse-click-on-javafx-tableview.html?m=1
-
-/*class MyStringTableCell extends TableCell<Task, String> {
-
-    @Override
-    public void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-        setText(empty ? null : getString());
-        setGraphic(null);
-    }
-
-    private String getString() {
-        return getItem() == null ? "" : getItem().toString();
-    }
-}
-
-class MyDeadlineTableCell extends TableCell<Task, LocalDateTime> {
-
-    @Override
-    public void updateItem(LocalDateTime item, boolean empty) {
-        super.updateItem(item, empty);
-        setText(empty ? null : getString());
-        setGraphic(null);
-    }
-
-    private String getString() {
-        return getItem() == null ? "" : getItem().toString();
-    }
-}*/
-
