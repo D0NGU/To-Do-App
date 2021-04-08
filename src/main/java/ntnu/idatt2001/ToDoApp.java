@@ -389,15 +389,14 @@ public class ToDoApp extends Application {
     private void editTaskUpdate(Task task) {
         //checks what priority it needs to set
         int priority = 1;
-        if (priorityChoiceBox.getValue().equals("High")) {
-            priority = 3;
-        } else if (priorityChoiceBox.getValue().equals("Medium")) {
-            priority = 2;
-        } else if (priorityChoiceBox.getValue().equals("Low")) {
-            priority = 1;
-        }
+            if (priorityChoiceBox1.getValue().equals("High")) {
+                priority = 3;
+            } else if (priorityChoiceBox1.getValue().equals("Medium")) {
+                priority = 2;
+            } else if (priorityChoiceBox1.getValue().equals("Low")) {
+                priority = 1;
+            }
         task.setPriority(priority);
-
         task.setName(taskNameField1.getText());
         task.setDescription(taskDescriptionField1.getText());
         task.setStatus(statusChoiceBox1.getValue());
