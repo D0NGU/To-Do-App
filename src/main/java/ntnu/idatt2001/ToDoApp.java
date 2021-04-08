@@ -40,11 +40,12 @@ public class ToDoApp extends Application {
     TableView<Task> tableViewToDo;
     TableView<Task> tableViewDoing;
     TableView<Task> tableViewDone;
-    TableView tableViewCategory;
+    TableView<Category> tableViewCategory;
     Task taskToView;
     TableColumn<Task, String> toDoListColumn;
     TableColumn<Task, String> doingColumn;
     TableColumn<Task, String> doneColumn;
+
 
     //Variables for the add task scene
     //they are outside start method so it is possible to use them in private methods
@@ -127,13 +128,17 @@ public class ToDoApp extends Application {
         //adding two buttons
         Button addTask = new Button("Add Task");
         addTask.setStyle("-fx-background-color: #a3ffb3");
-        Button sortBy = new Button("Sort by");
+        ComboBox sortBy = new ComboBox();
+        sortBy.getItems().addAll("Deadline","Priority");
+        sortBy.setPromptText("Sort tasks by");
         sortBy.setStyle("-fx-background-color: #86cffc");
 
         //adding the buttons and title to their gridpane
         gpTop.add(title, 0, 0, 2, 1);
         gpTop.add(addTask, 3, 1);
         gpTop.add(sortBy, 4, 1);
+
+
 
         //creating the table for the to do list
         tableViewToDo = new TableView();
@@ -264,18 +269,19 @@ public class ToDoApp extends Application {
         //the add button is pressed
         addButton.setOnAction(actionEvent -> {
             //checks what priority it needs to set
-            int priority = 1;
+            int priority2 = 1;
             if (priorityChoiceBox.getValue().equals("High")) {
-                priority = 3;
+                priority2 = 3;
             } else if (priorityChoiceBox.getValue().equals("Medium")) {
-                priority = 2;
+                priority2 = 2;
             } else if (priorityChoiceBox.getValue().equals("Low")) {
-                priority = 1;
+                priority2 = 1;
             }
-            data.addTask(new Task(taskNameField.getText(), statusChoiceBox.getValue(), priority,
+            Task task = new Task(taskNameField.getText(), statusChoiceBox.getValue(), priority2,
                     taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadLineTime.getText()))
                     , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText()))
-                    , new Category(taskCategoryField.getText(), "")));
+                    , new Category(taskCategoryField.getText(), ""));
+            data.addTask(task);
             stage2.close();
             update();
             resetAddTaskValues();
@@ -286,6 +292,16 @@ public class ToDoApp extends Application {
             stage2.close();
             //stage.show();
             resetAddTaskValues();
+        });
+
+        //what happens when you change the sort by combobox
+        sortBy.setOnAction(actionEvent -> {
+            data.sortLists(sortBy.getValue().toString());
+            //sortBy.getSelectionModel().clearSelection();
+            //sortBy.setValue(null);
+            //sortBy.();
+            sortBy.setPlaceholder(new Text("Sort tasks by"));
+            update();
         });
 
         //adding all the gridpanes to the main layoutpane
@@ -535,7 +551,7 @@ public class ToDoApp extends Application {
         } catch (EOFException e) {
             //System.out.println("File found but empty");
         } catch (IOException ioe) {
-            System.out.println("IO-failure");
+            System.out.println(ioe);
         } catch (Exception e) {
             System.out.println("Something other than IO failure");
         }
