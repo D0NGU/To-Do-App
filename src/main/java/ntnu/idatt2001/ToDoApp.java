@@ -234,17 +234,18 @@ public class ToDoApp extends Application {
 
         //creating the category table
         tableViewCategory = new TableView();
-        TableColumn<Task, String> categoryColumn = new TableColumn<>("Categories");
-        tableViewCategory.getColumns().addAll(categoryColumn);
+        TableColumn<Category, String> categoryColumn = new TableColumn<>("Categories");
+        //adding the columns to the category table
+        addCheckBoxToTable();
+        tableViewCategory.getColumns().add(categoryColumn);
         //setting what the values of the columns will be
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
         tableViewCategory.setPrefSize(130, 300);
-        //making the table only show the columns that i added
-        tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the category table to gridpane
         gpCategory.add(tableViewCategory, 0, 0);
 
+        data.getAllTasks().stream().forEach(t->t.getCategory().setShowing(true));
         //adding all the task data to the tables
         update();
 
@@ -283,6 +284,10 @@ public class ToDoApp extends Application {
                     , new Category(taskCategoryField.getText(), ""));
             data.addTask(task);
             stage2.close();
+
+            if(sortBy.getValue() != null){
+                data.sortLists(sortBy.getValue().toString());
+            }
             update();
             resetAddTaskValues();
         });
@@ -483,12 +488,18 @@ public class ToDoApp extends Application {
     }
 
     private void update() {
-        tableViewToDo.setItems(data.getToDoList());
-        tableViewDoing.setItems(data.getDoingList());
-        tableViewDone.setItems(data.getDoneList());
-        List<Category> categoryList = data.getAllTasks().stream().map(Task::getCategory).distinct().collect(Collectors.toList());
-        ObservableList<Category> categoryObservableList = FXCollections.observableList(categoryList);
-        tableViewCategory.setItems(categoryObservableList);
+        //
+        tableViewCategory.setItems(data.getCategoryList());
+        List<Task> toDoList = data.getToDoList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
+        List<Task> doingList = data.getDoingList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
+        List<Task> doneList = data.getDoneList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
+        ObservableList<Task> toDoObservableList = FXCollections.observableList(toDoList);
+        ObservableList<Task> doingObservableList = FXCollections.observableList(doingList);
+        ObservableList<Task> doneObservableList = FXCollections.observableList(doneList);
+        tableViewToDo.setItems(toDoObservableList);
+        tableViewDoing.setItems(doingObservableList);
+        tableViewDone.setItems(doneObservableList);
+        //refreshing all
         tableViewToDo.refresh();
         tableViewDoing.refresh();
         tableViewDone.refresh();
@@ -641,6 +652,58 @@ public class ToDoApp extends Application {
             doneColumn.getColumns().add(colBtn);
         }
 
+    }
+
+    private void addCheckBoxToTable(){
+        //the table that will contain the checkbox
+        TableColumn<Category, Void> colCB = new TableColumn();
+        colCB.setPrefWidth(40);
+        //making it not possible for user to resize the column or reorder it
+        colCB.setResizable(false);
+        colCB.setReorderable(false);
+
+        //creating a custom cellFactory, so it can contain a checkbox
+        Callback<TableColumn<Category, Void>, TableCell<Category, Void>> cellFactory = new Callback<TableColumn<Category, Void>, TableCell<Category, Void>>() {
+            @Override
+            public TableCell<Category, Void> call(final TableColumn<Category, Void> param) {
+                final TableCell<Category, Void> cell = new TableCell<Category, Void>() {
+                    private final CheckBox checkBox = new CheckBox();
+                    {
+                        checkBox.setSelected(true);
+                        update();
+                        checkBox.setOnAction((ActionEvent event) -> {
+                            Category category = getTableView().getItems().get(getIndex());
+                            if(!checkBox.isSelected()){
+                                category.setShowing(false);
+                                data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(false));
+                                update();
+                            }else if(checkBox.isSelected()){
+                                category.setShowing(true);
+                                data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(true));
+                                update();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        //
+        colCB.setCellFactory(cellFactory);
+
+        //
+        tableViewCategory.getColumns().add(colCB);
     }
 
 }
