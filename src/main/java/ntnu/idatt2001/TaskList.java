@@ -90,10 +90,10 @@ public class TaskList implements java.io.Serializable{
      * @param sortBy - what the list shall be sorted after (either deadline og priority)
      */
     public void sortLists(String sortBy){
-        if (sortBy.equals("deadline")){
+        if (sortBy.equalsIgnoreCase("deadline")){
             allTasks.sort(Comparator.comparing(Task::getDeadline));
-        } else if (sortBy.equals("priority")){
-            allTasks.sort(Comparator.comparing(Task::getPriority));
+        } else if (sortBy.equalsIgnoreCase("priority")){
+            allTasks.sort(Comparator.comparing(Task::getPriority).reversed());
         }
     }
 
