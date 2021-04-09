@@ -1,12 +1,11 @@
 package ntnu.idatt2001;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -17,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -101,7 +101,7 @@ public class ToDoApp extends Application {
         GridPane gpAddTask = new GridPane();
         GridPane gpViewTask = new GridPane();
 
-        Scene mainScene = new Scene(pane, 1300, 600);
+        Scene mainScene = new Scene(pane, 1400, 600);
         Scene addTaskScene = new Scene(gpAddTask, 460, 300);
         viewTaskScene = new Scene(gpViewTask, 460, 300);
 
@@ -146,9 +146,11 @@ public class ToDoApp extends Application {
         toDoListColumn = new TableColumn<>("To-do list");
         TableColumn deadlineColumn = new TableColumn<>("Deadline");
         TableColumn taskNameColumn = new TableColumn<>("Task");
+        TableColumn priorityColumn = new TableColumn<>();
         //changing the width of each column
         deadlineColumn.setPrefWidth(115);
         taskNameColumn.setPrefWidth(170);
+        priorityColumn.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize them
         toDoListColumn.setReorderable(false);
         deadlineColumn.setResizable(false);
@@ -156,7 +158,7 @@ public class ToDoApp extends Application {
         taskNameColumn.setResizable(false);
         taskNameColumn.setReorderable(false);
         //adding the deadline and taskname column to the todolist column to create nested columns
-        toDoListColumn.getColumns().addAll(deadlineColumn, taskNameColumn);
+        toDoListColumn.getColumns().addAll(deadlineColumn, priorityColumn, taskNameColumn);
         //adding the button columns to the to do table
         addButtonToTable("to do");
         //adding all the columns to the table
@@ -164,6 +166,11 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        priorityColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
+                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
+            }
+        });
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
@@ -176,9 +183,11 @@ public class ToDoApp extends Application {
         doingColumn = new TableColumn<>("Doing list");
         TableColumn deadlineColumn1 = new TableColumn<>("Deadline");
         TableColumn taskNameColumn1 = new TableColumn<>("Task");
+        TableColumn priorityColumn1 = new TableColumn<>();
         //changing the width of each column
         deadlineColumn1.setPrefWidth(115);
         taskNameColumn1.setPrefWidth(170);
+        priorityColumn1.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
         deadlineColumn1.setResizable(false);
         taskNameColumn1.setResizable(false);
@@ -207,17 +216,21 @@ public class ToDoApp extends Application {
         doneColumn = new TableColumn<>("Done list");
         TableColumn deadlineColumn2 = new TableColumn<>("Finish date");
         TableColumn taskNameColumn2 = new TableColumn<>("Task");
+        TableColumn priorityColumn2 = new TableColumn<>();
         //changing the width of each column
         deadlineColumn2.setPrefWidth(115);
         taskNameColumn2.setPrefWidth(170);
+        priorityColumn2.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
         deadlineColumn2.setResizable(false);
         taskNameColumn2.setResizable(false);
         doneColumn.setReorderable(false);
         deadlineColumn2.setReorderable(false);
         taskNameColumn2.setReorderable(false);
+        priorityColumn2.setResizable(false);
+        priorityColumn2.setReorderable(false);
         //adding the deadline and taskname column to the done column to create nested columns
-        doneColumn.getColumns().addAll(deadlineColumn2, taskNameColumn2);
+        doneColumn.getColumns().addAll(deadlineColumn2, priorityColumn2, taskNameColumn2);
         //adding the button columns to the done table
         addButtonToTable("done");
         //adding all the columns to the table
@@ -247,6 +260,8 @@ public class ToDoApp extends Application {
 
         data.getAllTasks().stream().forEach(t->t.getCategory().setShowing(true));
         //adding all the task data to the tables
+
+        //addPriorityToTable();
         update();
 
         //add task button is pressed
@@ -705,4 +720,15 @@ public class ToDoApp extends Application {
         tableViewCategory.getColumns().add(colCB);
     }
 
+    private String intToString(int priority) {
+        String result = "";
+        if (priority == 3) {
+            result = "H";
+        } else if (priority == 2) {
+            result = "M";
+        } else if (priority == 1) {
+            result = "L";
+        }
+        return result;
+    }
 }
