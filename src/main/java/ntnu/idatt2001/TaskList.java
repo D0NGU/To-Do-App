@@ -3,7 +3,6 @@ package ntnu.idatt2001;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -58,6 +57,10 @@ public class TaskList implements java.io.Serializable{
         return FXCollections.observableList(doneList);
     }
 
+    /**
+     * method to only get the categories of all tasks
+     * @return a list of all categories of all tasks
+     */
     public ObservableList<Category> getCategoryList(){
         List<Category> categoryList = allTasks.stream().map(Task::getCategory).distinct().collect(Collectors.toList());
         return FXCollections.observableList(categoryList);
