@@ -153,9 +153,11 @@ public class ToDoApp extends Application {
         //making it so that the user cant move the columns around or resize them
         toDoListColumn.setReorderable(false);
         deadlineColumn.setResizable(false);
+        priorityColumn.setResizable(false);
         deadlineColumn.setReorderable(false);
         taskNameColumn.setResizable(false);
         taskNameColumn.setReorderable(false);
+        priorityColumn.setReorderable(false);
         //adding the deadline and taskname column to the todolist column to create nested columns
         toDoListColumn.getColumns().addAll(deadlineColumn, priorityColumn, taskNameColumn);
         //adding the button columns to the to do table
