@@ -11,7 +11,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -28,7 +27,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,7 @@ public class ToDoApp extends Application {
     TableColumn<Task, String> toDoListColumn;
     TableColumn<Task, String> doingColumn;
     TableColumn<Task, String> doneColumn;
+    ComboBox sortBy;
 
 
     //Variables for the add task scene
@@ -128,7 +127,7 @@ public class ToDoApp extends Application {
         //adding two buttons
         Button addTask = new Button("Add Task");
         addTask.setStyle("-fx-background-color: #a3ffb3");
-        ComboBox sortBy = new ComboBox();
+        sortBy = new ComboBox();
         sortBy.getItems().addAll("Deadline","Priority");
         sortBy.setPromptText("Sort tasks by");
         sortBy.setStyle("-fx-background-color: #86cffc");
@@ -191,11 +190,13 @@ public class ToDoApp extends Application {
         //making it so that the user cant move the columns around or resize the
         deadlineColumn1.setResizable(false);
         taskNameColumn1.setResizable(false);
+        priorityColumn1.setResizable(false);
         doingColumn.setReorderable(false);
         deadlineColumn1.setReorderable(false);
         taskNameColumn1.setReorderable(false);
+        priorityColumn1.setReorderable(false);
         //adding the deadline and taskname column to the doing column to create nested columns
-        doingColumn.getColumns().addAll(deadlineColumn1, taskNameColumn1);
+        doingColumn.getColumns().addAll(deadlineColumn1, priorityColumn1,taskNameColumn1);
         //adding the button columns to the doing table
         addButtonToTable("doing2");
         addButtonToTable("doing1");
@@ -204,6 +205,11 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
+        priorityColumn1.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
+                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
+            }
+        });
         //making the table only show the columns that i added
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
@@ -238,6 +244,11 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("finishDate"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        priorityColumn2.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
+                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
+            }
+        });
         //making the table only show the columns that i added
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
@@ -317,9 +328,6 @@ public class ToDoApp extends Application {
         //what happens when you change the sort by combobox
         sortBy.setOnAction(actionEvent -> {
             data.sortLists(sortBy.getValue().toString());
-            //sortBy.getSelectionModel().clearSelection();
-            //sortBy.setValue(null);
-            //sortBy.();
             sortBy.setPlaceholder(new Text("Sort tasks by"));
             update();
         });
@@ -395,6 +403,10 @@ public class ToDoApp extends Application {
                     //a help method to update the information of the task
                     editTaskUpdate(taskToView);
                     stage2.close();
+
+                    if(sortBy.getValue() != null){
+                        data.sortLists(sortBy.getValue().toString());
+                    }
                     update();
                 });
             }
