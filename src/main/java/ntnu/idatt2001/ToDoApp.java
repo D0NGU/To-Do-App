@@ -2,6 +2,7 @@ package ntnu.idatt2001;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,8 +21,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -88,6 +91,7 @@ public class ToDoApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         fillWithTestData();
+        stage2.initModality(Modality.APPLICATION_MODAL);
         //a stage to show the view task scene.
         //Makes a new window
         //Stage stage2 = new Stage();
@@ -144,12 +148,12 @@ public class ToDoApp extends Application {
         //creating the table for the to do list
         tableViewToDo = new TableView();
         //creating the columns in the table
-        toDoListColumn = new TableColumn<>("To-do list");
+        toDoListColumn = new TableColumn<>("To-do");
         TableColumn deadlineColumn = new TableColumn<>("Deadline");
         TableColumn taskNameColumn = new TableColumn<>("Task");
         TableColumn priorityColumn = new TableColumn<>();
         //changing the width of each column
-        deadlineColumn.setPrefWidth(115);
+        deadlineColumn.setPrefWidth(75);
         taskNameColumn.setPrefWidth(170);
         priorityColumn.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize them
@@ -180,14 +184,15 @@ public class ToDoApp extends Application {
 
         //creating the table for the doing list
         tableViewDoing = new TableView();
-        doingColumn = new TableColumn<>("Doing list");
+        doingColumn = new TableColumn<>("Doing");
         TableColumn deadlineColumn1 = new TableColumn<>("Deadline");
         TableColumn taskNameColumn1 = new TableColumn<>("Task");
         TableColumn priorityColumn1 = new TableColumn<>();
         //changing the width of each column
-        deadlineColumn1.setPrefWidth(115);
+        deadlineColumn1.setPrefWidth(75);
         taskNameColumn1.setPrefWidth(170);
         priorityColumn1.setPrefWidth(20);
+        //priorityColumn1.setMaxWidth(20);
         //making it so that the user cant move the columns around or resize the
         deadlineColumn1.setResizable(false);
         taskNameColumn1.setResizable(false);
@@ -217,12 +222,12 @@ public class ToDoApp extends Application {
 
         //creating the table for done list
         tableViewDone = new TableView();
-        doneColumn = new TableColumn<>("Done list");
+        doneColumn = new TableColumn<>("Completed");
         TableColumn finishDateColumn = new TableColumn<>("Finish date");
         TableColumn taskNameColumn2 = new TableColumn<>("Task");
         TableColumn priorityColumn2 = new TableColumn<>();
         //changing the width of each column
-        finishDateColumn.setPrefWidth(115);
+        finishDateColumn.setPrefWidth(75);
         taskNameColumn2.setPrefWidth(170);
         priorityColumn2.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
@@ -253,6 +258,8 @@ public class ToDoApp extends Application {
         //creating the category table
         tableViewCategory = new TableView();
         TableColumn<Category, String> categoryColumn = new TableColumn<>("Categories");
+        categoryColumn.setReorderable(false);
+        categoryColumn.setResizable(false);
         //adding the columns to the category table
         addCheckBoxToTable();
         tableViewCategory.getColumns().add(categoryColumn);
@@ -260,6 +267,7 @@ public class ToDoApp extends Application {
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
         tableViewCategory.setPrefSize(130, 300);
+        tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the category table to gridpane
         gpCategory.add(tableViewCategory, 0, 0);
 
@@ -621,6 +629,9 @@ public class ToDoApp extends Application {
                             //updating the tasklist to contain the changed task
                             update();
                         });
+                        Tooltip tooltip = new Tooltip("Move task to right");
+                        tooltip.setShowDelay(Duration.millis(300));
+                        btn.setTooltip(tooltip);
                     }
 
                     //button that pushes task to the left
@@ -638,6 +649,9 @@ public class ToDoApp extends Application {
                             //updating the tasklist to contain the changed task
                             update();
                         });
+                        Tooltip tooltip = new Tooltip("Move task to left");
+                        tooltip.setShowDelay(Duration.millis(300));
+                        btn2.setTooltip(tooltip);
                     }
 
                     @Override
@@ -693,16 +707,24 @@ public class ToDoApp extends Application {
                         update();
                         checkBox.setOnAction((ActionEvent event) -> {
                             Category category = getTableView().getItems().get(getIndex());
+                            Tooltip tooltip = new Tooltip();
                             if(!checkBox.isSelected()){
                                 category.setShowing(false);
                                 data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(false));
                                 update();
+                                tooltip = new Tooltip("Show tasks of this category");
                             }else if(checkBox.isSelected()){
                                 category.setShowing(true);
                                 data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(true));
                                 update();
+                                tooltip = new Tooltip("Hide tasks of this category");
                             }
+                            tooltip.setShowDelay(Duration.millis(300));
+                            checkBox.setTooltip(tooltip);
                         });
+                        Tooltip tooltip = new Tooltip("Hide tasks of this category");
+                        tooltip.setShowDelay(Duration.millis(300));
+                        checkBox.setTooltip(tooltip);
                     }
 
                     @Override
@@ -721,6 +743,7 @@ public class ToDoApp extends Application {
 
         //
         colCB.setCellFactory(cellFactory);
+        colCB.setPrefWidth(30);
 
         //
         tableViewCategory.getColumns().add(colCB);
@@ -782,21 +805,24 @@ public class ToDoApp extends Application {
                         if(typeOfDate.equalsIgnoreCase("deadline")){
                             LocalDateTime taskDeadline = task.getDeadline();
 
-                            String textDate = taskDeadline.getDayOfMonth()+". "+taskDeadline.getMonth()+" - "+taskDeadline.getYear();
+                            String textDate = taskDeadline.getDayOfMonth()+"/"+taskDeadline.getMonthValue()+"/"+taskDeadline.getYear();
                             String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
 
-                            setText(textDate.toLowerCase()+"\n"+textTime);
+                            setText(textDate+"\n"+textTime);
 
                             if(taskDeadline.isBefore(LocalDateTime.now())){
                                 setTextFill(Color.RED);
+                                Tooltip tooltip = new Tooltip("Deadline has passed");
+                                tooltip.setShowDelay(Duration.millis(200));
+                                setTooltip(tooltip);
                             }
                         }else if(typeOfDate.equalsIgnoreCase("finishdate")){
                             LocalDateTime taskFinishDate = task.getFinishDate();
 
-                            String textDate = taskFinishDate.getDayOfMonth()+". "+taskFinishDate.getMonth()+" - "+taskFinishDate.getYear();
+                            String textDate = taskFinishDate.getDayOfMonth()+"/"+taskFinishDate.getMonthValue()+"/"+taskFinishDate.getYear();
                             String textTime = taskFinishDate.getHour()+":"+new DecimalFormat("00").format(taskFinishDate.getMinute());
 
-                            setText(textDate.toLowerCase()+"\n"+textTime);
+                            setText(textDate+"\n"+textTime);
                         }
 
                     }
