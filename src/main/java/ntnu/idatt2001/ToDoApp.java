@@ -167,7 +167,7 @@ public class ToDoApp extends Application {
         //adding all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
-        deadlineColumn.setCellFactory(column -> formattingDeadline());
+        deadlineColumn.setCellFactory(column -> formattingDate("deadline"));
         //priorityColumn.setCellFactory(column -> addPriorityColors());
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn.setCellFactory(column -> addPriorityColors());
@@ -205,7 +205,7 @@ public class ToDoApp extends Application {
         tableViewDoing.getColumns().addAll(doingColumn);
         //setting what the values of the columns will be
         //deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-        deadlineColumn1.setCellFactory(column -> formattingDeadline());
+        deadlineColumn1.setCellFactory(column -> formattingDate("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn1.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -218,29 +218,29 @@ public class ToDoApp extends Application {
         //creating the table for done list
         tableViewDone = new TableView();
         doneColumn = new TableColumn<>("Done list");
-        TableColumn deadlineColumn2 = new TableColumn<>("Finish date");
+        TableColumn finishDateColumn = new TableColumn<>("Finish date");
         TableColumn taskNameColumn2 = new TableColumn<>("Task");
         TableColumn priorityColumn2 = new TableColumn<>();
         //changing the width of each column
-        deadlineColumn2.setPrefWidth(115);
+        finishDateColumn.setPrefWidth(115);
         taskNameColumn2.setPrefWidth(170);
         priorityColumn2.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
-        deadlineColumn2.setResizable(false);
+        finishDateColumn.setResizable(false);
         taskNameColumn2.setResizable(false);
         doneColumn.setReorderable(false);
-        deadlineColumn2.setReorderable(false);
+        finishDateColumn.setReorderable(false);
         taskNameColumn2.setReorderable(false);
         priorityColumn2.setResizable(false);
         priorityColumn2.setReorderable(false);
         //adding the deadline and taskname column to the done column to create nested columns
-        doneColumn.getColumns().addAll(deadlineColumn2, priorityColumn2, taskNameColumn2);
+        doneColumn.getColumns().addAll(finishDateColumn , priorityColumn2, taskNameColumn2);
         //adding the button columns to the done table
         addButtonToTable("done");
         //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
         //setting what the values of the columns will be
-        deadlineColumn2.setCellFactory(column -> formattingDeadline());
+        finishDateColumn.setCellFactory(column -> formattingDate("finishdate"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn2.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -767,7 +767,7 @@ public class ToDoApp extends Application {
         }
     }
 
-    private TableCell<Task, Void> formattingDeadline(){
+    private TableCell<Task, Void> formattingDate(String typeOfDate){
         {
             return new TableCell<Task, Void>() {
                 @Override
@@ -779,12 +779,26 @@ public class ToDoApp extends Application {
                         setStyle("");
                     } else { //If the cell is not empty
                         Task task = getTableView().getItems().get(getIndex());
-                        LocalDateTime taskDeadline = task.getDeadline();
+                        if(typeOfDate.equalsIgnoreCase("deadline")){
+                            LocalDateTime taskDeadline = task.getDeadline();
 
-                        String textDate = taskDeadline.getDayOfMonth()+". "+taskDeadline.getMonth()+" - "+taskDeadline.getYear();
-                        String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
+                            String textDate = taskDeadline.getDayOfMonth()+". "+taskDeadline.getMonth()+" - "+taskDeadline.getYear();
+                            String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
 
-                        setText(textDate.toLowerCase()+"\n"+textTime);
+                            setText(textDate.toLowerCase()+"\n"+textTime);
+
+                            if(taskDeadline.isBefore(LocalDateTime.now())){
+                                setTextFill(Color.RED);
+                            }
+                        }else if(typeOfDate.equalsIgnoreCase("finishdate")){
+                            LocalDateTime taskFinishDate = task.getFinishDate();
+
+                            String textDate = taskFinishDate.getDayOfMonth()+". "+taskFinishDate.getMonth()+" - "+taskFinishDate.getYear();
+                            String textTime = taskFinishDate.getHour()+":"+new DecimalFormat("00").format(taskFinishDate.getMinute());
+
+                            setText(textDate.toLowerCase()+"\n"+textTime);
+                        }
+
                     }
                 }
             };
