@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -167,11 +168,7 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
-                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
-            }
-        });
+        priorityColumn.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
@@ -207,11 +204,7 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn1.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
-                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
-            }
-        });
+        priorityColumn1.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
@@ -246,11 +239,7 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("finishDate"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn2.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Task, String>, ObservableValue<String>>() {
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Task, String> p) {
-                return new ReadOnlyStringWrapper(intToString(p.getValue().getPriority()));
-            }
-        });
+        priorityColumn2.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
@@ -418,13 +407,13 @@ public class ToDoApp extends Application {
     private void editTaskUpdate(Task task) {
         //checks what priority it needs to set
         int priority = 1;
-            if (priorityChoiceBox1.getValue().equals("High")) {
-                priority = 3;
-            } else if (priorityChoiceBox1.getValue().equals("Medium")) {
-                priority = 2;
-            } else if (priorityChoiceBox1.getValue().equals("Low")) {
-                priority = 1;
-            }
+        if (priorityChoiceBox1.getValue().equals("High")) {
+            priority = 3;
+        } else if (priorityChoiceBox1.getValue().equals("Medium")) {
+            priority = 2;
+        } else if (priorityChoiceBox1.getValue().equals("Low")) {
+            priority = 1;
+        }
         task.setPriority(priority);
         task.setName(taskNameField1.getText());
         task.setDescription(taskDescriptionField1.getText());
@@ -656,8 +645,8 @@ public class ToDoApp extends Application {
                         } else {
                             //adding the -> button to only to do and doing column
                             if(tableName.equals("to do") || tableName.equals("doing1")){
-                               setGraphic(btn);
-                            //adding the <- button to only doing and done column
+                                setGraphic(btn);
+                                //adding the <- button to only doing and done column
                             }else if(tableName.equals("doing2") || tableName.equals("done")){
                                 setGraphic(btn2);
                             }
@@ -744,5 +733,34 @@ public class ToDoApp extends Application {
             result = "L";
         }
         return result;
+    }
+
+    private TableCell<Task, Void> addPriorityColors(){
+        {
+            return new TableCell<Task, Void>() {
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty); //This is mandatory
+
+                    if (empty) { //If the cell is empty
+                        setText(null);
+                        setStyle("");
+                    } else { //If the cell is not empty
+                        Task task = getTableView().getItems().get(getIndex());
+
+                        if (task.getPriority() == 1) {
+                            setText("L");
+                            setStyle("-fx-background-color: yellow");
+                        } else if (task.getPriority() == 2){
+                            setText("M");
+                            setStyle("-fx-background-color: orange");
+                        }else if (task.getPriority() == 3){
+                            setText("H");
+                            setStyle("-fx-background-color: red");
+                        }
+                    }
+                }
+            };
+        }
     }
 }
