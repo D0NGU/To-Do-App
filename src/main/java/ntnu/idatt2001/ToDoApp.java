@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -166,7 +167,8 @@ public class ToDoApp extends Application {
         //adding all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
-        deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+        deadlineColumn.setCellFactory(column -> formattingDeadline());
+        //priorityColumn.setCellFactory(column -> addPriorityColors());
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -202,7 +204,8 @@ public class ToDoApp extends Application {
         //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
         //setting what the values of the columns will be
-        deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+        //deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+        deadlineColumn1.setCellFactory(column -> formattingDeadline());
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn1.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -237,7 +240,7 @@ public class ToDoApp extends Application {
         //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
         //setting what the values of the columns will be
-        deadlineColumn2.setCellValueFactory(new PropertyValueFactory<>("finishDate"));
+        deadlineColumn2.setCellFactory(column -> formattingDeadline());
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn2.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -750,7 +753,7 @@ public class ToDoApp extends Application {
 
                         if (task.getPriority() == 1) {
                             setText("L");
-                            setStyle("-fx-background-color: yellow");
+                            setStyle("-fx-background-color: limegreen");
                         } else if (task.getPriority() == 2){
                             setText("M");
                             setStyle("-fx-background-color: orange");
@@ -758,6 +761,30 @@ public class ToDoApp extends Application {
                             setText("H");
                             setStyle("-fx-background-color: red");
                         }
+                    }
+                }
+            };
+        }
+    }
+
+    private TableCell<Task, Void> formattingDeadline(){
+        {
+            return new TableCell<Task, Void>() {
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty); //This is mandatory
+
+                    if (empty) { //If the cell is empty
+                        setText(null);
+                        setStyle("");
+                    } else { //If the cell is not empty
+                        Task task = getTableView().getItems().get(getIndex());
+                        LocalDateTime taskDeadline = task.getDeadline();
+
+                        String textDate = taskDeadline.getDayOfMonth()+". "+taskDeadline.getMonth()+" - "+taskDeadline.getYear();
+                        String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
+
+                        setText(textDate.toLowerCase()+"\n"+textTime);
                     }
                 }
             };
