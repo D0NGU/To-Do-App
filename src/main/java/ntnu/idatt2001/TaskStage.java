@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * class that represents one task stage
+ */
 public class TaskStage extends Stage {
     public enum Mode {
         NEW, EDIT
@@ -22,12 +25,19 @@ public class TaskStage extends Stage {
     private Task existingTask = null;
     private Task result;
 
+    /**
+     * Constructor to create a new add task stage
+     */
     public TaskStage() {
         super();
         this.mode = Mode.NEW;
         createStage();
     }
 
+    /**
+     * Constructor to create a new view task stage
+     * @param task - the task to view
+     */
     public TaskStage(Task task) {
         super();
         this.mode = Mode.EDIT;
@@ -35,11 +45,17 @@ public class TaskStage extends Stage {
         createStage();
     }
 
+    /**
+     * method to get the task from createStage() method
+     * @return a task if save or delete is clicked, null if edit or cancel is clicked
+     */
     public Task getResult() {
         return result;
     }
 
-
+    /**
+     * method to create the stage
+     */
     private void createStage() {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -90,7 +106,7 @@ public class TaskStage extends Stage {
             gpTaskPane.add(cancelButton, 1, 8);
             GridPane.setHalignment(addButton, HPos.RIGHT);
             GridPane.setHalignment(cancelButton, HPos.LEFT);
-        } else if (mode == Mode.EDIT) {
+        } else if (mode == Mode.VIEW) {
             gpTaskPane.add(saveButton, 5, 8);
             gpTaskPane.add(deleteButton, 1, 8);
             GridPane.setHalignment(saveButton, HPos.RIGHT);
