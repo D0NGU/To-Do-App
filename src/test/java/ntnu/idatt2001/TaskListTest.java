@@ -17,9 +17,9 @@ class TaskListTest {
     void initAll(){
         list = new TaskList();
         t = new Task("test", "to do", 1, "something to test ", LocalDateTime.of(LocalDate.of(2021, 03, 20), LocalTime.of(20, 00)),
-                LocalDateTime.now(), new Category("c", ""));
+                LocalDateTime.now(), new Category("c"));
         t2 = new Task("test2", "doing", 2, " ", LocalDateTime.of(LocalDate.of(2021, 03, 25), LocalTime.of(8, 00))
-                , LocalDateTime.now(), new Category("c", ""));
+                , LocalDateTime.now(), new Category("c"));
     }
 
     @Nested
