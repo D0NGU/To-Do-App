@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class TaskStage extends Stage {
     public enum Mode {
-        NEW, EDIT
+        NEW, VIEW
     }
 
     private final Mode mode;
@@ -40,7 +40,7 @@ public class TaskStage extends Stage {
      */
     public TaskStage(Task task) {
         super();
-        this.mode = Mode.EDIT;
+        this.mode = Mode.VIEW;
         this.existingTask = task;
         createStage();
     }
