@@ -265,5 +265,80 @@ public class TaskStage extends Stage {
             super.close(); //closing the stage
         });
     }
+
+    /**
+     * method to validate if all the input fields are valid or not
+     * @return - an empty string if it is valid, a non empty string if it is not valid
+     */
+    private String validateInput(){
+        String explanation = "";
+
+        //checking if task name is not filled out
+        if (taskNameField.getText().isBlank()) {
+            explanation += "Task must have a name.\n";
+        }
+
+        //checking if deadline date is written in wrong format
+        try {
+            if(!(deadlineDate.getEditor().getText().isEmpty())){
+                deadlineDate.getConverter().fromString(deadlineDate.getEditor().getText());
+            }
+        } catch (DateTimeParseException e) {
+            explanation += "Deadline must be written like 'dd/mm/yyyy'.\n";
+        }
+
+        //checking if startdate is written in wrong format
+        try {
+            startDateDate.getConverter().fromString(startDateDate.getEditor().getText());
+        } catch (DateTimeParseException e){
+            explanation += "Startdate must be written like 'dd/mm/yyyy'.\n";
+        }
+
+        //checking if startdate time is written in wrong format
+        try{
+            LocalTime.parse(startDateTime.getText());
+        }catch(DateTimeParseException e){
+            explanation += "Startdate time must be written like 'hh:mm'.\n";
+        }
+
+        //checking if deadline time is written in wrong format
+        try{
+            if (!deadlineTime.getText().isBlank()) {
+                LocalTime.parse(deadlineTime.getText());
+            }
+        }catch(DateTimeParseException e){
+            explanation += "Deadline time must be written like 'hh:mm'.\n";
+        }
+
+        //checking if the user selected a time but not a date for deadline
+        if (deadlineDate.getEditor().getText().isEmpty() && !(deadlineTime.getText().isEmpty())) {
+            explanation += "When a deadline time is selected, you must also select a date.\n";
+        }
+
+        //checking if the user selected a time but not a date startdate
+        if (startDateDate.getEditor().getText().isEmpty() && !(startDateTime.getText().isEmpty())) {
+            explanation += "When a startdate time is selected, you must also select a date.\n";
+        }
+
+        //checking if both the time and date is empty for startdate, which all tasks must have
+        if (startDateDate.getEditor().getText().isEmpty() && startDateTime.getText().isEmpty()) {
+            explanation += "Your task must have a startdate. \n";
+        }
+
+        return explanation;
+    }
+
+    /**
+     * method to create an alert box of type warning
+     * @param explanation - feedback to the user on what went wrong
+     */
+    private void createWarningAlert(String explanation){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Invalid input");
+        alert.setHeaderText("Invalid input");
+        //setting the content that is displayed inside the alert
+        alert.setContentText(explanation);
+        alert.showAndWait();
+    }
 }
 
