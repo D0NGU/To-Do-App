@@ -1,9 +1,6 @@
 package ntnu.idatt2001;
 
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,13 +12,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -31,7 +25,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -243,9 +236,17 @@ public class ToDoApp extends Application {
 
         //add task button is pressed
         addTask.setOnAction(actionEvent -> {
-            stage2.setScene(addTaskScene);
-            stage2.show();
-            resetAddTaskValues();
+            stage2 = new TaskStage();
+            stage2.setTitle("Add Task");
+            stage2.showAndWait();
+            Task newTask = stage2.getResult();
+            data.addTask(newTask);
+
+            if(sortBy.getValue() != null){
+                data.sortLists(sortBy.getValue().toString());
+            }
+
+            update();
         });
 
 
@@ -291,35 +292,19 @@ public class ToDoApp extends Application {
                     taskToView = tableViewToDo.getSelectionModel().getSelectedItem();
                 } else if (tableName.equalsIgnoreCase("doing")) {
                     taskToView = tableViewDoing.getSelectionModel().getSelectedItem();
+
                 } else if (tableName.equalsIgnoreCase("done")) {
                     taskToView = tableViewDone.getSelectionModel().getSelectedItem();
                 }
 
                 //opens a new window to view the selected task
-                fillViewTask(taskToView);
-                stage2.setScene(viewTaskScene);
-                stage2.show();
+                stage2 = new TaskStage(taskToView);
+                stage2.showAndWait();
 
-                //deletes the task the user clicked on if the deletebutton is clicked
-                deleteButton.setOnAction(actionEvent -> {
-                    //removes the task and returns to mainScene
-                    data.removeTask(taskToView);
-                    stage2.close();
-                    //updates the table after deleting a task
-                    update();
-                });
-
-                //saves the edited information of the task
-                saveButton.setOnAction(actionEvent -> {
-                    //a help method to update the information of the task
-                    editTaskUpdate(taskToView);
-                    stage2.close();
-
-                    if(sortBy.getValue() != null){
-                        data.sortLists(sortBy.getValue().toString());
-                    }
-                    update();
-                });
+                if(stage2.getResult() != null){
+                    data.removeTask(stage2.getResult());
+                }
+                update();
             }
         }
     }
@@ -536,18 +521,6 @@ public class ToDoApp extends Application {
 
         //
         tableViewCategory.getColumns().add(colCB);
-    }
-
-    private String intToString(int priority) {
-        String result = "";
-        if (priority == 3) {
-            result = "H";
-        } else if (priority == 2) {
-            result = "M";
-        } else if (priority == 1) {
-            result = "L";
-        }
-        return result;
     }
 
     private TableCell<Task, Void> addPriorityColors(){
