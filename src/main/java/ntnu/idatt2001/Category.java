@@ -55,14 +55,6 @@ public class Category implements java.io.Serializable{
     }
 
     /**
-     * method to change the color of a given category
-     * @param color - the new color
-     */
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    /**
      * method to change the visibility of the category
      * @param showing - true if the category should be showing, false if it should be hidden
      */
