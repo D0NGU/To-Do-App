@@ -206,6 +206,7 @@ public class ToDoApp extends Application {
         TableColumn<Category, String> categoryColumn = new TableColumn<>("Categories");
         categoryColumn.setReorderable(false);
         categoryColumn.setResizable(false);
+        categoryColumn.setPrefWidth(100);
         //adding the columns to the category table
         addCheckBoxToTable();
         tableViewCategory.getColumns().add(categoryColumn);
@@ -571,18 +572,21 @@ public class ToDoApp extends Application {
                         Task task = getTableView().getItems().get(getIndex());
                         if(typeOfDate.equalsIgnoreCase("deadline")){
                             LocalDateTime taskDeadline = task.getDeadline();
+                            if(taskDeadline == null){
+                                setText("No deadline");
+                            }else{
+                                String textDate = taskDeadline.getDayOfMonth()+"/"+taskDeadline.getMonthValue()+"/"+taskDeadline.getYear();
+                                String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
+                                setText(textDate+"\n"+textTime);
 
-                            String textDate = taskDeadline.getDayOfMonth()+"/"+taskDeadline.getMonthValue()+"/"+taskDeadline.getYear();
-                            String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
-
-                            setText(textDate+"\n"+textTime);
-
-                            if(taskDeadline.isBefore(LocalDateTime.now())){
-                                setTextFill(Color.RED);
-                                Tooltip tooltip = new Tooltip("Deadline has passed");
-                                tooltip.setShowDelay(Duration.millis(200));
-                                setTooltip(tooltip);
+                                if(taskDeadline.isBefore(LocalDateTime.now())){
+                                    setTextFill(Color.RED);
+                                    Tooltip tooltip = new Tooltip("Deadline has passed");
+                                    tooltip.setShowDelay(Duration.millis(200));
+                                    setTooltip(tooltip);
+                                }
                             }
+
                         }else if(typeOfDate.equalsIgnoreCase("finishdate")){
                             LocalDateTime taskFinishDate = task.getFinishDate();
 
