@@ -40,6 +40,25 @@ public class Task implements java.io.Serializable{
     }
 
     /**
+     * constructor that creates a new task without a deadline
+     * @param name - the name of the task
+     * @param status - the status of the task
+     * @param priority - the priority of the task
+     * @param description - the description of the task
+     * @param startDate - the startdate of the task
+     * @param category - the category of the task
+     */
+    public Task(String name, String status, int priority, String description,
+                LocalDateTime startDate, Category category) {
+        this.name = name;
+        this.status = status;
+        this.priority = priority;
+        this.description = description;
+        this.startDate = startDate;
+        this.category = category;
+    }
+
+    /**
      * method to get the name of the given task
      * @return the name of the task
      */
