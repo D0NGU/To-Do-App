@@ -3,7 +3,6 @@ package ntnu.idatt2001;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,17 +10,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.Duration;
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,31 +92,23 @@ public class ToDoApp extends Application {
         tableViewToDo = new TableView();
         //creating the columns in the table
         toDoListColumn = new TableColumn<>("To-do");
-        TableColumn deadlineColumn = new TableColumn<>("Deadline");
+        TableColumn deadlineColumn = new CustomTableColumn("deadline",this);
         TableColumn taskNameColumn = new TableColumn<>("Task");
-        TableColumn priorityColumn = new TableColumn<>();
+        TableColumn priorityColumn = new CustomTableColumn(false, this);
+        TableColumn buttonColumn = new CustomTableColumn("to do","", this);
         //changing the width of each column
-        deadlineColumn.setPrefWidth(75);
         taskNameColumn.setPrefWidth(170);
-        priorityColumn.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize them
         toDoListColumn.setReorderable(false);
-        deadlineColumn.setResizable(false);
-        priorityColumn.setResizable(false);
-        deadlineColumn.setReorderable(false);
         taskNameColumn.setResizable(false);
         taskNameColumn.setReorderable(false);
-        priorityColumn.setReorderable(false);
         //adding the deadline and taskname column to the todolist column to create nested columns
-        toDoListColumn.getColumns().addAll(deadlineColumn, priorityColumn, taskNameColumn);
+        toDoListColumn.getColumns().addAll(deadlineColumn, priorityColumn, taskNameColumn,buttonColumn);
         //adding the button columns to the to do table
-        addButtonToTable("to do");
         //adding all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
-        deadlineColumn.setCellFactory(column -> formattingDate("deadline"));
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
@@ -133,32 +119,24 @@ public class ToDoApp extends Application {
         //creating the table for the doing list
         tableViewDoing = new TableView();
         doingColumn = new TableColumn<>("Doing");
-        TableColumn deadlineColumn1 = new TableColumn<>("Deadline");
+        TableColumn deadlineColumn1 = new CustomTableColumn("deadline",this);
         TableColumn taskNameColumn1 = new TableColumn<>("Task");
-        TableColumn priorityColumn1 = new TableColumn<>();
+        TableColumn priorityColumn1 = new CustomTableColumn(false, this);
+        TableColumn buttonLeftColumn = new CustomTableColumn("doingLeft","", this);
+        TableColumn buttonRightColumn = new CustomTableColumn("doingRight","", this);
         //changing the width of each column
-        deadlineColumn1.setPrefWidth(75);
         taskNameColumn1.setPrefWidth(170);
-        priorityColumn1.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
-        deadlineColumn1.setResizable(false);
         taskNameColumn1.setResizable(false);
-        priorityColumn1.setResizable(false);
         doingColumn.setReorderable(false);
-        deadlineColumn1.setReorderable(false);
         taskNameColumn1.setReorderable(false);
-        priorityColumn1.setReorderable(false);
         //adding the deadline and taskname column to the doing column to create nested columns
-        doingColumn.getColumns().addAll(deadlineColumn1, priorityColumn1,taskNameColumn1);
+        doingColumn.getColumns().addAll(deadlineColumn1, priorityColumn1,taskNameColumn1,buttonLeftColumn,buttonRightColumn);
         //adding the button columns to the doing table
-        addButtonToTable("doing2");
-        addButtonToTable("doing1");
         //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
         //setting what the values of the columns will be
-        deadlineColumn1.setCellFactory(column -> formattingDate("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn1.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
@@ -169,31 +147,23 @@ public class ToDoApp extends Application {
         //creating the table for done list
         tableViewDone = new TableView();
         doneColumn = new TableColumn<>("Completed");
-        TableColumn finishDateColumn = new TableColumn<>("Finish date");
+        TableColumn finishDateColumn = new CustomTableColumn("finishdate",this);
         TableColumn taskNameColumn2 = new TableColumn<>("Task");
-        TableColumn priorityColumn2 = new TableColumn<>();
+        TableColumn priorityColumn2 = new CustomTableColumn(false, this);
+        TableColumn buttonDoneColumn = new CustomTableColumn("done","", this);
         //changing the width of each column
-        finishDateColumn.setPrefWidth(75);
         taskNameColumn2.setPrefWidth(170);
-        priorityColumn2.setPrefWidth(20);
         //making it so that the user cant move the columns around or resize the
-        finishDateColumn.setResizable(false);
         taskNameColumn2.setResizable(false);
         doneColumn.setReorderable(false);
-        finishDateColumn.setReorderable(false);
         taskNameColumn2.setReorderable(false);
-        priorityColumn2.setResizable(false);
-        priorityColumn2.setReorderable(false);
         //adding the deadline and taskname column to the done column to create nested columns
-        doneColumn.getColumns().addAll(finishDateColumn , priorityColumn2, taskNameColumn2);
+        doneColumn.getColumns().addAll(finishDateColumn , priorityColumn2, taskNameColumn2,buttonDoneColumn);
         //adding the button columns to the done table
-        addButtonToTable("done");
         //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
         //setting what the values of the columns will be
-        finishDateColumn.setCellFactory(column -> formattingDate("finishdate"));
         taskNameColumn2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        priorityColumn2.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
@@ -208,8 +178,8 @@ public class ToDoApp extends Application {
         categoryColumn.setResizable(false);
         categoryColumn.setPrefWidth(100);
         //adding the columns to the category table
-        addCheckBoxToTable();
-        tableViewCategory.getColumns().add(categoryColumn);
+        TableColumn<Category, Void> checkboxColumn = new CustomTableColumn(true, this);
+        tableViewCategory.getColumns().addAll(checkboxColumn, categoryColumn);
         //setting what the values of the columns will be
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
@@ -264,6 +234,10 @@ public class ToDoApp extends Application {
 
     }
 
+    public TaskList getData() {
+        return data;
+    }
+
     private void taskOnClick(MouseEvent event, String tableName) {
         boolean notEmpty = false;
         //can decide how many clicks must happen before a window is opened
@@ -304,7 +278,7 @@ public class ToDoApp extends Application {
         }
     }
 
-    private void update() {
+    public void update() {
         tableViewCategory.setItems(data.getCategoryList());
         List<Task> toDoList = data.getToDoList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
         List<Task> doingList = data.getDoingList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
@@ -375,230 +349,5 @@ public class ToDoApp extends Application {
             System.out.println("Something other than IO failure");
         }
         super.init();
-    }
-
-    //method to create a tablecolumn that contains a button
-    //the methods take in the tablename: "to do", "doing1", "doing2", "done"
-    //"doing1" and "doing2" is because doing column requires two button columns
-    private void addButtonToTable(String tableName) {
-        //the table that will contain the button
-        TableColumn<Task, Void> colBtn = new TableColumn();
-        colBtn.setPrefWidth(40);
-        //making it not possible for user to resize the column or reorder it
-        colBtn.setResizable(false);
-        colBtn.setReorderable(false);
-
-        //creating a custom cellFactory, so it can contain a button
-        Callback<TableColumn<Task, Void>, TableCell<Task, Void>> cellFactory = new Callback<TableColumn<Task, Void>, TableCell<Task, Void>>() {
-            @Override
-            public TableCell<Task, Void> call(final TableColumn<Task, Void> param) {
-                final TableCell<Task, Void> cell = new TableCell<Task, Void>() {
-
-                    //button that pushes task to the right
-                    private final Button btn = new Button("->");
-                    {
-                        btn.setOnAction((ActionEvent event) -> {
-                            Task data = getTableView().getItems().get(getIndex());
-                            //checking what status the task is in, so that the status can be changed correctly
-                            //after clicking the -> button
-                            if(data.getStatus().equals("to do")){
-                                data.setStatus("doing");
-                            }else if(data.getStatus().equals("doing")){
-                                data.setStatus("done");
-                            }
-                            //updating the tasklist to contain the changed task
-                            update();
-                        });
-                        Tooltip tooltip = new Tooltip("Move task to right");
-                        tooltip.setShowDelay(Duration.millis(300));
-                        btn.setTooltip(tooltip);
-                    }
-
-                    //button that pushes task to the left
-                    private final Button btn2 = new Button("<-");
-                    {
-                        btn2.setOnAction((ActionEvent event) -> {
-                            Task data = getTableView().getItems().get(getIndex());
-                            //checking what status the task is in, so that the status can be changed correctly
-                            //after clicking the <- button
-                            if(data.getStatus().equals("doing")){
-                                data.setStatus("to do");
-                            }else if(data.getStatus().equals("done")){
-                                data.setStatus("doing");
-                            }
-                            //updating the tasklist to contain the changed task
-                            update();
-                        });
-                        Tooltip tooltip = new Tooltip("Move task to left");
-                        tooltip.setShowDelay(Duration.millis(300));
-                        btn2.setTooltip(tooltip);
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            //adding the -> button to only to do and doing column
-                            if(tableName.equals("to do") || tableName.equals("doing1")){
-                                setGraphic(btn);
-                                //adding the <- button to only doing and done column
-                            }else if(tableName.equals("doing2") || tableName.equals("done")){
-                                setGraphic(btn2);
-                            }
-                        }
-                    }
-                };
-                return cell;
-            }
-        };
-
-        //setting the factory of colBtn to the custom cellfactory created
-        colBtn.setCellFactory(cellFactory);
-
-        //Sets the correct buttons to "to do", "doing" and "done" columns
-        if(tableName.equals("to do")){
-            toDoListColumn.getColumns().add(colBtn);
-        }else if(tableName.equals("doing1") || tableName.equals("doing2")){
-            doingColumn.getColumns().add(colBtn);
-        } else if(tableName.equals("done")) {
-            doneColumn.getColumns().add(colBtn);
-        }
-
-    }
-
-    private void addCheckBoxToTable(){
-        //the table that will contain the checkbox
-        TableColumn<Category, Void> colCB = new TableColumn();
-        colCB.setPrefWidth(40);
-        //making it not possible for user to resize the column or reorder it
-        colCB.setResizable(false);
-        colCB.setReorderable(false);
-
-        //creating a custom cellFactory, so it can contain a checkbox
-        Callback<TableColumn<Category, Void>, TableCell<Category, Void>> cellFactory = new Callback<TableColumn<Category, Void>, TableCell<Category, Void>>() {
-            @Override
-            public TableCell<Category, Void> call(final TableColumn<Category, Void> param) {
-                final TableCell<Category, Void> cell = new TableCell<Category, Void>() {
-                    private final CheckBox checkBox = new CheckBox();
-                    {
-                        checkBox.setSelected(true);
-                        update();
-                        checkBox.setOnAction((ActionEvent event) -> {
-                            Category category = getTableView().getItems().get(getIndex());
-                            Tooltip tooltip = new Tooltip();
-                            if(!checkBox.isSelected()){
-                                category.setShowing(false);
-                                data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(false));
-                                update();
-                                tooltip = new Tooltip("Show tasks of this category");
-                            }else if(checkBox.isSelected()){
-                                category.setShowing(true);
-                                data.getAllTasks().stream().filter(t -> t.getCategory().getName().equals(category.getName())).forEach(t -> t.getCategory().setShowing(true));
-                                update();
-                                tooltip = new Tooltip("Hide tasks of this category");
-                            }
-                            tooltip.setShowDelay(Duration.millis(300));
-                            checkBox.setTooltip(tooltip);
-                        });
-                        Tooltip tooltip = new Tooltip("Hide tasks of this category");
-                        tooltip.setShowDelay(Duration.millis(300));
-                        checkBox.setTooltip(tooltip);
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(checkBox);
-                        }
-                    }
-                };
-                return cell;
-            }
-        };
-
-        //
-        colCB.setCellFactory(cellFactory);
-        colCB.setPrefWidth(30);
-
-        //
-        tableViewCategory.getColumns().add(colCB);
-    }
-
-    private TableCell<Task, Void> addPriorityColors(){
-        {
-            return new TableCell<Task, Void>() {
-                @Override
-                protected void updateItem(Void item, boolean empty) {
-                    super.updateItem(item, empty); //This is mandatory
-
-                    if (empty) { //If the cell is empty
-                        setText(null);
-                        setStyle("");
-                    } else { //If the cell is not empty
-                        Task task = getTableView().getItems().get(getIndex());
-
-                        if (task.getPriority() == 1) {
-                            setText("L");
-                            setStyle("-fx-background-color: limegreen");
-                        } else if (task.getPriority() == 2){
-                            setText("M");
-                            setStyle("-fx-background-color: orange");
-                        }else if (task.getPriority() == 3){
-                            setText("H");
-                            setStyle("-fx-background-color: red");
-                        }
-                    }
-                }
-            };
-        }
-    }
-
-    private TableCell<Task, Void> formattingDate(String typeOfDate){
-        {
-            return new TableCell<Task, Void>() {
-                @Override
-                protected void updateItem(Void item, boolean empty) {
-                    super.updateItem(item, empty); //This is mandatory
-
-                    if (empty) { //If the cell is empty
-                        setText(null);
-                        setStyle("");
-                    } else { //If the cell is not empty
-                        Task task = getTableView().getItems().get(getIndex());
-                        if(typeOfDate.equalsIgnoreCase("deadline")){
-                            LocalDateTime taskDeadline = task.getDeadline();
-                            if(taskDeadline == null){
-                                setText("No deadline");
-                            }else{
-                                String textDate = taskDeadline.getDayOfMonth()+"/"+taskDeadline.getMonthValue()+"/"+taskDeadline.getYear();
-                                String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
-                                setText(textDate+"\n"+textTime);
-
-                                if(taskDeadline.isBefore(LocalDateTime.now())){
-                                    setTextFill(Color.RED);
-                                    Tooltip tooltip = new Tooltip("Deadline has passed");
-                                    tooltip.setShowDelay(Duration.millis(200));
-                                    setTooltip(tooltip);
-                                }
-                            }
-
-                        }else if(typeOfDate.equalsIgnoreCase("finishdate")){
-                            LocalDateTime taskFinishDate = task.getFinishDate();
-
-                            String textDate = taskFinishDate.getDayOfMonth()+"/"+taskFinishDate.getMonthValue()+"/"+taskFinishDate.getYear();
-                            String textTime = taskFinishDate.getHour()+":"+new DecimalFormat("00").format(taskFinishDate.getMinute());
-
-                            setText(textDate+"\n"+textTime);
-                        }
-
-                    }
-                }
-            };
-        }
     }
 }
