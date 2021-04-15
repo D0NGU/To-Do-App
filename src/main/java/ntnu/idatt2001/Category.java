@@ -8,17 +8,14 @@ import java.util.Objects;
  */
 public class Category implements java.io.Serializable{
     private String name;
-    private String color;
     private boolean isShowing;
 
     /**
      * constructor that creates a new category
      * @param name - the name of the category
-     * @param color - the color of the category
      */
-    public Category(String name, String color){
+    public Category(String name){
         this.name = name;
-        this.color = color;
         isShowing = true;
     }
 
@@ -28,14 +25,6 @@ public class Category implements java.io.Serializable{
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * method to get the color of the given category
-     * @return the color of the category
-     */
-    public String getColor() {
-        return color;
     }
 
     /**
@@ -94,7 +83,6 @@ public class Category implements java.io.Serializable{
     public String toString() {
         return "Category:\n" +
                 "Name='" + name + '\'' +
-                ", color='" + color + '\'' +
                 ", isShowing=" + isShowing +
                 '}';
     }
