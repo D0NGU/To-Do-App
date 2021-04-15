@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,7 +95,7 @@ public class TaskList implements java.io.Serializable{
      */
     public void sortLists(String sortBy){
         if (sortBy.equalsIgnoreCase("deadline")){
-            allTasks.sort(Comparator.comparing(Task::getDeadline));
+            Collections.sort(allTasks, new TaskComparator());
         } else if (sortBy.equalsIgnoreCase("priority")){
             allTasks.sort(Comparator.comparing(Task::getPriority).reversed());
         }
