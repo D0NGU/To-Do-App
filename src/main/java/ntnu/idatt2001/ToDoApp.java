@@ -50,38 +50,9 @@ public class ToDoApp extends Application {
     TableColumn<Task, String> doneColumn;
     ComboBox sortBy;
 
-
-    //Variables for the add task scene
-    //they are outside start method so it is possible to use them in private methods
-    DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
-    TextField taskNameField = new TextField();
-    TextArea taskDescriptionField = new TextArea();
-    TextField deadLineTime = new TextField();
-    TextField startDateTime = new TextField(LocalTime.now().format(timeFormat));
-    DatePicker deadlineDate = new DatePicker();
-    DatePicker startDateDate = new DatePicker(LocalDate.now());
-    TextField taskCategoryField = new TextField();
-    ChoiceBox<String> priorityChoiceBox = new ChoiceBox<>();
-    ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
-
-    //Variables for show task scene
-    TextField taskNameField1 = new TextField();
-    TextArea taskDescriptionField1 = new TextArea();
-    TextField deadLineTime1 = new TextField();
-    TextField startDateTime1 = new TextField(LocalTime.now().format(timeFormat));
-    DatePicker deadlineDate1 = new DatePicker();
-    DatePicker finishDate = new DatePicker();
-    DatePicker startDateDate1 = new DatePicker(LocalDate.now());
-    TextField taskCategoryField1 = new TextField();
-    ChoiceBox<String> priorityChoiceBox1 = new ChoiceBox<>();
-    ChoiceBox<String> statusChoiceBox1 = new ChoiceBox<>();
-
-    //a stage to show the view task scene.
-    //Makes a new window
-    Stage stage2 = new Stage();
+    TaskStage stage2;
     Scene viewTaskScene;
-    Button deleteButton;
-    Button saveButton;
+
 
     //to run the application
     public static void main(String[] args) {
@@ -91,10 +62,6 @@ public class ToDoApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         fillWithTestData();
-        stage2.initModality(Modality.APPLICATION_MODAL);
-        //a stage to show the view task scene.
-        //Makes a new window
-        //Stage stage2 = new Stage();
 
         //creating layoutpanes for the gui
         stage.setTitle("To-Do application");
@@ -107,7 +74,6 @@ public class ToDoApp extends Application {
         GridPane gpViewTask = new GridPane();
 
         Scene mainScene = new Scene(pane, 1400, 600);
-        Scene addTaskScene = new Scene(gpAddTask, 460, 300);
         viewTaskScene = new Scene(gpViewTask, 460, 300);
 
         //adding paddings for the visuals (more space between layoutpane and its content)
@@ -271,10 +237,8 @@ public class ToDoApp extends Application {
         //adding the category table to gridpane
         gpCategory.add(tableViewCategory, 0, 0);
 
-        data.getAllTasks().stream().forEach(t->t.getCategory().setShowing(true));
-        //adding all the task data to the tables
+        data.getAllTasks().stream().forEach( t -> t.getCategory().setShowing(true));
 
-        //addPriorityToTable();
         update();
 
         //add task button is pressed
@@ -284,48 +248,6 @@ public class ToDoApp extends Application {
             resetAddTaskValues();
         });
 
-
-        addTaskScene(gpAddTask);
-        //buttons that are displayed inn add task scene
-        Button addButton = new Button("Add");
-        addButton.setStyle("-fx-background-color: #a3ffb3");
-        Button cancelButton = new Button("Cancel");
-        cancelButton.setStyle("-fx-background-color: tomato");
-        gpAddTask.add(addButton, 5, 8);
-        gpAddTask.add(cancelButton, 1, 8);
-        GridPane.setHalignment(addButton, HPos.RIGHT);
-
-        //the add button is pressed
-        addButton.setOnAction(actionEvent -> {
-            //checks what priority it needs to set
-            int priority2 = 1;
-            if (priorityChoiceBox.getValue().equals("High")) {
-                priority2 = 3;
-            } else if (priorityChoiceBox.getValue().equals("Medium")) {
-                priority2 = 2;
-            } else if (priorityChoiceBox.getValue().equals("Low")) {
-                priority2 = 1;
-            }
-            Task task = new Task(taskNameField.getText(), statusChoiceBox.getValue(), priority2,
-                    taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadLineTime.getText()))
-                    , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText()))
-                    , new Category(taskCategoryField.getText(), ""));
-            data.addTask(task);
-            stage2.close();
-
-            if(sortBy.getValue() != null){
-                data.sortLists(sortBy.getValue().toString());
-            }
-            update();
-            resetAddTaskValues();
-        });
-
-        //what happens when you click on the cancel button
-        cancelButton.setOnAction(actionEvent -> {
-            stage2.close();
-            //stage.show();
-            resetAddTaskValues();
-        });
 
         //what happens when you change the sort by combobox
         sortBy.setOnAction(actionEvent -> {
@@ -338,19 +260,6 @@ public class ToDoApp extends Application {
         pane.setTop(gpTop);
         pane.setCenter(gpTaskList);
         pane.setLeft(gpCategory);
-
-        //Buttons save and delete are added to viewTaskScene
-        viewTaskScene(gpViewTask);
-        saveButton = new Button("Save");
-        deleteButton = new Button("Delete");
-        //Colors are added to the buttons
-        saveButton.setStyle("-fx-background-color: lightgreen");
-        deleteButton.setStyle("-fx-background-color: tomato");
-
-        gpViewTask.add(saveButton, 5, 8);
-        gpViewTask.add(deleteButton, 1, 8);
-        GridPane.setHalignment(saveButton, HPos.RIGHT);
-        GridPane.setHalignment(deleteButton, HPos.LEFT);
 
         //if one of the rows in one of the tables is clicked on, the method taskOnClick is run
         tableViewToDo.setOnMouseClicked((MouseEvent event) -> taskOnClick(event, "toDo"));
@@ -415,106 +324,6 @@ public class ToDoApp extends Application {
         }
     }
 
-    private void editTaskUpdate(Task task) {
-        //checks what priority it needs to set
-        int priority = 1;
-        if (priorityChoiceBox1.getValue().equals("High")) {
-            priority = 3;
-        } else if (priorityChoiceBox1.getValue().equals("Medium")) {
-            priority = 2;
-        } else if (priorityChoiceBox1.getValue().equals("Low")) {
-            priority = 1;
-        }
-        task.setPriority(priority);
-        task.setName(taskNameField1.getText());
-        task.setDescription(taskDescriptionField1.getText());
-        task.setStatus(statusChoiceBox1.getValue());
-        task.setDeadline(LocalDateTime.of(deadlineDate1.getValue(), LocalTime.parse(deadLineTime1.getText())));
-        task.setStartDate(LocalDateTime.of(startDateDate1.getValue(), LocalTime.parse(startDateTime1.getText())));
-        task.setCategory(new Category(taskCategoryField1.getText(), ""));
-    }
-
-    private GridPane viewTaskScene(GridPane gpViewTask) {
-        HBox outsideBox = new HBox();
-        taskNameField1.setPromptText("Task name");
-        taskCategoryField1.setPromptText("Category");
-        taskDescriptionField1.setPromptText("Task description");
-        deadLineTime1.setPromptText("hh:mm");
-        deadLineTime1.setPrefWidth(70);
-        startDateTime1.setPrefWidth(70);
-        deadlineDate1.setPrefWidth(110);
-        startDateDate1.setPrefWidth(110);
-        taskCategoryField1.setPrefWidth(110);
-        priorityChoiceBox1.getItems().addAll("High", "Medium", "Low");
-        statusChoiceBox1.getItems().addAll("to do", "doing", "done");
-
-        gpViewTask.add(outsideBox, 0, 0, 7, 10);
-        gpViewTask.add(taskNameField1, 1, 1, 5, 1);
-        gpViewTask.add(taskDescriptionField1, 2, 6, 4, 2);
-        gpViewTask.add(new Label("Description:"), 1, 6);
-        gpViewTask.add(new Label("Deadline:"), 1, 4);
-        gpViewTask.add(deadlineDate1, 2, 4);
-        gpViewTask.add(deadLineTime1, 3, 4);
-        gpViewTask.add(new Label("Startdate"), 1, 3);
-        gpViewTask.add(startDateDate1, 2, 3);
-        gpViewTask.add(startDateTime1, 3, 3);
-        gpViewTask.add(new Label("Category:"), 1, 5);
-        gpViewTask.add(taskCategoryField1, 2, 5);
-        gpViewTask.add(new Label("Priority:"), 4, 3);
-        gpViewTask.add(priorityChoiceBox1, 5, 3);
-        gpViewTask.add(new Label("Status:"), 4, 4);
-        gpViewTask.add(statusChoiceBox1, 5, 4);
-
-        return gpViewTask;
-    }
-
-    //method that creates add task scene
-    private GridPane addTaskScene(GridPane gpAddTask) {
-        HBox outsideBox = new HBox();
-        taskNameField.setPromptText("Task name");
-        taskCategoryField.setPromptText("Category");
-        taskDescriptionField.setPromptText("Task description");
-        deadLineTime.setPromptText("hh:mm");
-        deadLineTime.setPrefWidth(70);
-        startDateTime.setPrefWidth(70);
-        deadlineDate.setPrefWidth(110);
-        startDateDate.setPrefWidth(110);
-        taskCategoryField.setPrefWidth(110);
-        taskDescriptionField.setPrefHeight(100);
-        priorityChoiceBox.getItems().addAll("High", "Medium", "Low");
-        priorityChoiceBox.setValue("High");
-        statusChoiceBox.getItems().addAll("to do", "doing");
-        statusChoiceBox.setValue("to do");
-
-        gpAddTask.add(outsideBox, 0, 0, 7, 10);
-        gpAddTask.add(taskNameField, 1, 1, 5, 1);
-        gpAddTask.add(taskDescriptionField, 2, 6, 4, 2);
-        gpAddTask.add(new Label("Description:"), 1, 6);
-        gpAddTask.add(new Label("Deadline:"), 1, 4);
-        gpAddTask.add(deadlineDate, 2, 4);
-        gpAddTask.add(deadLineTime, 3, 4);
-        gpAddTask.add(new Label("Startdate"), 1, 3);
-        gpAddTask.add(startDateDate, 2, 3);
-        gpAddTask.add(startDateTime, 3, 3);
-        gpAddTask.add(new Label("Category:"), 1, 5);
-        gpAddTask.add(taskCategoryField, 2, 5);
-        gpAddTask.add(new Label("Priority:"), 4, 3);
-        gpAddTask.add(priorityChoiceBox, 5, 3);
-        gpAddTask.add(new Label("Status:"), 4, 4);
-        gpAddTask.add(statusChoiceBox, 5, 4);
-        return gpAddTask;
-    }
-
-    private void resetAddTaskValues() {
-        taskDescriptionField.setText("");
-        taskNameField.setText("");
-        taskCategoryField.setText("");
-        startDateTime.setText(LocalTime.now().format(timeFormat));
-        startDateDate.setValue(LocalDate.now());
-        deadlineDate.setValue(null);
-        deadLineTime.setText("");
-    }
-
     private void update() {
         //
         tableViewCategory.setItems(data.getCategoryList());
@@ -542,26 +351,6 @@ public class ToDoApp extends Application {
                 LocalDateTime.now(), new Category("c2", ""));
         donetask.setFinishDate(LocalDateTime.now());
         data.addTask(donetask);
-    }
-
-    private void fillViewTask(Task task) {
-        taskDescriptionField1.setText(task.getDescription());
-        taskNameField1.setText(task.getName());
-        taskCategoryField1.setText(task.getCategory().getName());
-        startDateTime1.setText(task.getStartDate().toLocalTime().format(timeFormat));
-        startDateDate1.setValue(task.getStartDate().toLocalDate());
-        deadlineDate1.setValue(task.getDeadline().toLocalDate());
-        deadLineTime1.setText(task.getDeadline().toLocalTime().format(timeFormat));
-
-        if (task.getPriority() == 1) {
-            priorityChoiceBox1.setValue("Low");
-        } else if (task.getPriority() == 2) {
-            priorityChoiceBox1.setValue("Medium");
-        } else if (task.getPriority() == 3) {
-            priorityChoiceBox1.setValue("High");
-        }
-
-        statusChoiceBox1.setValue(task.getStatus());
     }
 
     @Override
