@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 /**
  * class that represents one task stage
@@ -72,8 +74,8 @@ public class TaskStage extends Stage {
         taskNameField.setPromptText("Task name");
         taskCategoryField.setPromptText("Category");
         taskDescriptionField.setPromptText("Task description");
-        deadLineTime.setPromptText("hh:mm");
-        deadLineTime.setPrefWidth(70);
+        deadlineTime.setPromptText("hh:mm");
+        deadlineTime.setPrefWidth(70);
         startDateTime.setPrefWidth(70);
         deadlineDate.setPrefWidth(110);
         startDateDate.setPrefWidth(110);
@@ -137,7 +139,7 @@ public class TaskStage extends Stage {
         gpTaskPane.add(new Label("Description:"), 1, 6);
         gpTaskPane.add(new Label("Deadline:"), 1, 4);
         gpTaskPane.add(deadlineDate, 2, 4);
-        gpTaskPane.add(deadLineTime, 3, 4);
+        gpTaskPane.add(deadlineTime, 3, 4);
         gpTaskPane.add(new Label("Startdate"), 1, 3);
         gpTaskPane.add(startDateDate, 2, 3);
         gpTaskPane.add(startDateTime, 3, 3);
@@ -162,11 +164,44 @@ public class TaskStage extends Stage {
             } else if (priorityChoiceBox.getValue().equals("Low")) {
                 priority2 = 1;
             }
-            result = new Task(taskNameField.getText(), statusChoiceBox.getValue(), priority2,
-                    taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadLineTime.getText()))
-                    , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText()))
-                    , new Category(taskCategoryField.getText(), ""));
-            super.close();
+
+            //checking if the category is empty or not
+            Category category = null;
+            if(taskCategoryField.getText().isBlank() ){
+                category = new Category("Miscellaneous");
+            } else {
+                category = new Category(taskCategoryField.getText().trim());
+            }
+
+            if(validateInput().isBlank()){
+                startDateDate.setValue(startDateDate.getConverter().fromString(startDateDate.getEditor().getText()));
+                //checking whether the task has a deadline or not
+                if(deadlineDate.getEditor().getText().isEmpty() && deadlineTime.getText().isBlank()){
+                    //creating the new task without a deadline
+                    result = new Task(taskNameField.getText().trim(), statusChoiceBox.getValue(), priority,
+                            taskDescriptionField.getText(), LocalDateTime.of(startDateDate.getValue()
+                            , LocalTime.parse(startDateTime.getText())), category);
+                }else if (!(deadlineDate.getEditor().getText().isEmpty()) && deadlineTime.getText().isBlank()){
+                    //if a deadline has a date but no time, then the time is automatically set to 23:59
+                    deadlineDate.setValue(deadlineDate.getConverter().fromString(deadlineDate.getEditor().getText()));
+                    deadlineTime.setText("23:59");
+                    result = new Task(taskNameField.getText().trim(), statusChoiceBox.getValue(), priority,
+                            taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadlineTime.getText()))
+                            , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText())), category);
+                }else{
+                    //creating the new task with a deadline
+                    deadlineDate.setValue(deadlineDate.getConverter().fromString(deadlineDate.getEditor().getText()));
+                    result = new Task(taskNameField.getText().trim(), statusChoiceBox.getValue(), priority,
+                            taskDescriptionField.getText(), LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadlineTime.getText()))
+                            , LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText())), category);
+                }
+
+                super.close(); //closing the stage
+            }else{
+                createWarningAlert(validateInput());
+            }
+
+
         });
 
         cancelButton.setOnAction(actionEvent -> {
@@ -182,15 +217,42 @@ public class TaskStage extends Stage {
             } else if (priorityChoiceBox.getValue().equals("Low")) {
                 priority = 1;
             }
-            existingTask.setPriority(priority);
-            existingTask.setName(taskNameField.getText());
-            existingTask.setDescription(taskDescriptionField.getText());
-            existingTask.setStatus(statusChoiceBox.getValue());
-            existingTask.setDeadline(LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadLineTime.getText())));
-            existingTask.setStartDate(LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText())));
-            existingTask.setCategory(new Category(taskCategoryField.getText(), ""));
 
-            super.close();
+            //checking if the category is empty or not
+            Category category = null;
+            if(taskCategoryField.getText().isBlank()){
+                category = new Category("Miscellaneous");
+            } else {
+                category = new Category(taskCategoryField.getText().trim());
+            }
+
+            if(validateInput().isBlank()){
+                //checking whether the task has a deadline or not
+                if(deadlineDate.getEditor().getText().isEmpty() && deadlineTime.getText().isBlank()){
+                    existingTask.setDeadline(null);
+                } else if (!(deadlineDate.getEditor().getText().isEmpty()) && deadlineTime.getText().isBlank()){
+                    deadlineDate.setValue(deadlineDate.getConverter().fromString(deadlineDate.getEditor().getText()));
+                    deadlineTime.setText("23:59");
+                    existingTask.setDeadline(LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadlineTime.getText())));
+                } else {
+                    deadlineDate.setValue(deadlineDate.getConverter().fromString(deadlineDate.getEditor().getText()));
+                    existingTask.setDeadline(LocalDateTime.of(deadlineDate.getValue(), LocalTime.parse(deadlineTime.getText())));
+                }
+
+                //updating all the information about the edited task
+                existingTask.setPriority(priority);
+                existingTask.setName(taskNameField.getText());
+                existingTask.setDescription(taskDescriptionField.getText());
+                existingTask.setStatus(statusChoiceBox.getValue());
+                startDateDate.setValue(startDateDate.getConverter().fromString(startDateDate.getEditor().getText()));
+                existingTask.setStartDate(LocalDateTime.of(startDateDate.getValue(), LocalTime.parse(startDateTime.getText())));
+                existingTask.setCategory(category);
+
+                super.close(); //closing the stage
+            }else{
+                createWarningAlert(validateInput());
+            }
+
         });
 
         deleteButton.setOnAction(actionEvent -> {
@@ -199,3 +261,4 @@ public class TaskStage extends Stage {
         });
     }
 }
+
