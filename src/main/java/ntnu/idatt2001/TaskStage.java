@@ -26,6 +26,16 @@ public class TaskStage extends Stage {
     private final Mode mode;
     private Task existingTask = null;
     private Task result;
+    private DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
+    private TextField taskNameField = new TextField();
+    private TextArea taskDescriptionField = new TextArea();
+    private TextField deadlineTime = new TextField();
+    private TextField startDateTime = new TextField(LocalTime.now().format(timeFormat));
+    private DatePicker deadlineDate = new DatePicker();
+    private DatePicker startDateDate = new DatePicker(LocalDate.now());
+    private TextField taskCategoryField = new TextField();
+    private ChoiceBox<String> priorityChoiceBox = new ChoiceBox<>();
+    private ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
 
     /**
      * Constructor to create a new add task stage
@@ -59,18 +69,6 @@ public class TaskStage extends Stage {
      * method to create the stage
      */
     private void createStage() {
-        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
-
-        TextField taskNameField = new TextField();
-        TextArea taskDescriptionField = new TextArea();
-        TextField deadLineTime = new TextField();
-        TextField startDateTime = new TextField(LocalTime.now().format(timeFormat));
-        DatePicker deadlineDate = new DatePicker();
-        DatePicker startDateDate = new DatePicker(LocalDate.now());
-        TextField taskCategoryField = new TextField();
-        ChoiceBox<String> priorityChoiceBox = new ChoiceBox<>();
-        ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
-
         taskNameField.setPromptText("Task name");
         taskCategoryField.setPromptText("Category");
         taskDescriptionField.setPromptText("Task description");
@@ -120,9 +118,14 @@ public class TaskStage extends Stage {
             taskCategoryField.setText(existingTask.getCategory().getName());
             startDateTime.setText(existingTask.getStartDate().toLocalTime().format(timeFormat));
             startDateDate.setValue(existingTask.getStartDate().toLocalDate());
-            deadlineDate.setValue(existingTask.getDeadline().toLocalDate());
-            deadLineTime.setText(existingTask.getDeadline().toLocalTime().format(timeFormat));
             statusChoiceBox.setValue(existingTask.getStatus());
+
+            if(existingTask.getDeadline() == null){
+                deadlineDate.setPromptText("No deadline");
+            }else{
+                deadlineDate.setValue(existingTask.getDeadline().toLocalDate());
+                deadlineTime.setText(existingTask.getDeadline().toLocalTime().format(timeFormat));
+            }
 
             if (existingTask.getPriority() == 1) {
                 priorityChoiceBox.setValue("Low");
@@ -150,19 +153,20 @@ public class TaskStage extends Stage {
         gpTaskPane.add(new Label("Status:"), 4, 4);
         gpTaskPane.add(statusChoiceBox, 5, 4);
 
+        //setting the scene with the gridpane
         Scene taskScene = new Scene(gpTaskPane, 460, 300);
         super.setScene(taskScene);
         super.initModality(Modality.APPLICATION_MODAL);
 
         addButton.setOnAction(actionEvent -> {
             //checks what priority it needs to set
-            int priority2 = 1;
+            int priority = 1;
             if (priorityChoiceBox.getValue().equals("High")) {
-                priority2 = 3;
+                priority = 3;
             } else if (priorityChoiceBox.getValue().equals("Medium")) {
-                priority2 = 2;
+                priority = 2;
             } else if (priorityChoiceBox.getValue().equals("Low")) {
-                priority2 = 1;
+                priority = 1;
             }
 
             //checking if the category is empty or not
@@ -205,10 +209,11 @@ public class TaskStage extends Stage {
         });
 
         cancelButton.setOnAction(actionEvent -> {
-            super.close();
+            super.close(); //closing the stage
         });
 
         saveButton.setOnAction(actionEvent -> {
+            //checks what priority it needs to set
             int priority = 1;
             if (priorityChoiceBox.getValue().equals("High")) {
                 priority = 3;
@@ -257,7 +262,7 @@ public class TaskStage extends Stage {
 
         deleteButton.setOnAction(actionEvent -> {
             result = existingTask;
-            super.close();
+            super.close(); //closing the stage
         });
     }
 }
