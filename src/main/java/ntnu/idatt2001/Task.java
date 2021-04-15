@@ -19,7 +19,7 @@ public class Task implements java.io.Serializable{
 
 
     /**
-     * constructor that creates a new task
+     * constructor that creates a new task with a deadline
      * @param name - the name of the task
      * @param status - the status of the task
      * @param priority - the priority of the task
