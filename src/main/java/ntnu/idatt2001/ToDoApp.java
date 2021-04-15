@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -54,8 +55,6 @@ public class ToDoApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        fillWithTestData();
-
         //creating layoutpanes for the gui
         stage.setTitle("To-Do application");
         BorderPane pane = new BorderPane();
@@ -325,17 +324,6 @@ public class ToDoApp extends Application {
         tableViewToDo.refresh();
         tableViewDoing.refresh();
         tableViewDone.refresh();
-    }
-
-    private void fillWithTestData() {
-        data.addTask(new Task("test", "to do", 1, "something to test ", LocalDateTime.of(LocalDate.of(2021, 03, 20), LocalTime.of(20, 00)),
-                LocalDateTime.now(), new Category("c", "")));
-        data.addTask(new Task("test2", "doing", 2, " ", LocalDateTime.of(LocalDate.of(2021, 03, 25), LocalTime.of(8, 00))
-                , LocalDateTime.now(), new Category("c", "")));
-        Task donetask = new Task("test3", "done", 1, " ", LocalDateTime.of(LocalDate.of(2021, 03, 23), LocalTime.of(10, 00)),
-                LocalDateTime.now(), new Category("c2", ""));
-        donetask.setFinishDate(LocalDateTime.now());
-        data.addTask(donetask);
     }
 
     @Override
