@@ -378,7 +378,7 @@ public class ToDoApp extends Application {
 
     //method to create a tablecolumn that contains a button
     //the methods take in the tablename: "to do", "doing1", "doing2", "done"
-    //"doing1" and "doing2" is because doing column requires two buttoncolumns
+    //"doing1" and "doing2" is because doing column requires two button columns
     private void addButtonToTable(String tableName) {
         //the table that will contain the button
         TableColumn<Task, Void> colBtn = new TableColumn();
