@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,9 +21,7 @@ import javafx.util.Duration;
 
 import java.io.*;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,8 +42,6 @@ public class ToDoApp extends Application {
     ComboBox sortBy;
 
     TaskStage stage2;
-    Scene viewTaskScene;
-
 
     //to run the application
     public static void main(String[] args) {
@@ -66,7 +61,6 @@ public class ToDoApp extends Application {
         GridPane gpViewTask = new GridPane();
 
         Scene mainScene = new Scene(pane, 1400, 600);
-        viewTaskScene = new Scene(gpViewTask, 460, 300);
 
         //adding paddings for the visuals (more space between layoutpane and its content)
         gpTop.setPadding(new Insets(0, 0, 0, 10));
@@ -87,7 +81,6 @@ public class ToDoApp extends Application {
         Text title = new Text("To-Do list");
         title.setFont(Font.font("Tohoma", FontWeight.EXTRA_BOLD, 40));
 
-
         //adding two buttons
         Button addTask = new Button("Add Task");
         addTask.setStyle("-fx-background-color: #a3ffb3");
@@ -100,8 +93,6 @@ public class ToDoApp extends Application {
         gpTop.add(title, 0, 0, 2, 1);
         gpTop.add(addTask, 3, 1);
         gpTop.add(sortBy, 4, 1);
-
-
 
         //creating the table for the to do list
         tableViewToDo = new TableView();
@@ -130,7 +121,6 @@ public class ToDoApp extends Application {
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
         deadlineColumn.setCellFactory(column -> formattingDate("deadline"));
-        //priorityColumn.setCellFactory(column -> addPriorityColors());
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn.setCellFactory(column -> addPriorityColors());
         //making the table only show the columns that i added
@@ -150,7 +140,6 @@ public class ToDoApp extends Application {
         deadlineColumn1.setPrefWidth(75);
         taskNameColumn1.setPrefWidth(170);
         priorityColumn1.setPrefWidth(20);
-        //priorityColumn1.setMaxWidth(20);
         //making it so that the user cant move the columns around or resize the
         deadlineColumn1.setResizable(false);
         taskNameColumn1.setResizable(false);
@@ -167,7 +156,6 @@ public class ToDoApp extends Application {
         //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
         //setting what the values of the columns will be
-        //deadlineColumn1.setCellValueFactory(new PropertyValueFactory<>("deadline"));
         deadlineColumn1.setCellFactory(column -> formattingDate("deadline"));
         taskNameColumn1.setCellValueFactory(new PropertyValueFactory<>("name"));
         priorityColumn1.setCellFactory(column -> addPriorityColors());
@@ -238,8 +226,11 @@ public class ToDoApp extends Application {
             stage2 = new TaskStage();
             stage2.setTitle("Add Task");
             stage2.showAndWait();
-            Task newTask = stage2.getResult();
-            data.addTask(newTask);
+
+            //if the getResult does not return null, means the user clicked add task
+            if(stage2.getResult() != null){
+                data.addTask(stage2.getResult());
+            }
 
             if(sortBy.getValue() != null){
                 data.sortLists(sortBy.getValue().toString());
@@ -300,8 +291,12 @@ public class ToDoApp extends Application {
                 stage2 = new TaskStage(taskToView);
                 stage2.showAndWait();
 
+                //get result returns a task, if its not null means the user clicked remove task
                 if(stage2.getResult() != null){
-                    data.removeTask(stage2.getResult());
+                    //checking if the user actually wants to delete the task
+                    if (showDeleteConfirmationDialog()) {
+                        data.removeTask(stage2.getResult());
+                    }
                 }
                 update();
             }
@@ -309,7 +304,6 @@ public class ToDoApp extends Application {
     }
 
     private void update() {
-        //
         tableViewCategory.setItems(data.getCategoryList());
         List<Task> toDoList = data.getToDoList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
         List<Task> doingList = data.getDoingList().stream().filter(t -> t.getCategory().isShowing()).collect(Collectors.toList());
@@ -324,6 +318,29 @@ public class ToDoApp extends Application {
         tableViewToDo.refresh();
         tableViewDoing.refresh();
         tableViewDone.refresh();
+    }
+
+    /**
+     * method to display a delete confirmation
+     * @return true if the user confirms to delete the task
+     */
+    public boolean showDeleteConfirmationDialog() {
+        boolean deleteConfirmed = false;
+
+        //creating a new confirmation alert to check if the user wants to delete the chosen task or not
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete confirmation");
+        alert.setHeaderText("Delete confirmation");
+        //setting the content that is displayed inside the alert
+        alert.setContentText("Are you sure you want to delete this task?");
+
+        //showing the alert and waiting for the user to respond
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent()) {
+            //if the user clicked on the ok button, then the delete action is confirmed
+            deleteConfirmed = (result.get() == ButtonType.OK);
+        }
+        return deleteConfirmed;
     }
 
     @Override
