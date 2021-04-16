@@ -1,6 +1,7 @@
 package ntnu.idatt2001;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
