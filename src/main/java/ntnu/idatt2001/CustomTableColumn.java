@@ -32,15 +32,15 @@ public class CustomTableColumn extends TableColumn {
 
     /**
      * constructor for creating a custom date column
-     * @param typeOfDate - what type of date is shown in the column, either "deadline" or "finishdate"
+     * @param typeOfDate - what type of date is shown in the column, either "Deadline" or "Finish date"
      * @param app - the application that uses the method
      */
     public CustomTableColumn(String typeOfDate, ToDoApp app){
-        super();
+        super(typeOfDate);
         this.app = app;
-        if(typeOfDate.equalsIgnoreCase("deadline")){
+        if(typeOfDate.equalsIgnoreCase("Deadline")){
             dateColumnCreator(typeOfDate);
-        }else if(typeOfDate.equalsIgnoreCase("finishdate")){
+        }else if(typeOfDate.equalsIgnoreCase("Finish date")){
             dateColumnCreator(typeOfDate);
         }
     }
@@ -134,14 +134,29 @@ public class CustomTableColumn extends TableColumn {
                     Task task = getTableView().getItems().get(getIndex());
 
                     if (task.getPriority() == 1) {
-                        setText("L");
-                        setStyle("-fx-background-color: limegreen");
+
+                        ImageView i = new ImageView(new Image("LowPriority.png"));
+                        i.setFitHeight(20);
+                        i.setFitWidth(20);
+                        setAlignment(Pos.CENTER);
+                        setGraphic(i);
+
                     } else if (task.getPriority() == 2){
-                        setText("M");
-                        setStyle("-fx-background-color: orange");
+
+                        ImageView i = new ImageView(new Image("MediumPriority.png"));
+                        i.setFitHeight(20);
+                        i.setFitWidth(20);
+                        setAlignment(Pos.CENTER);
+                        setGraphic(i);
+
                     }else if (task.getPriority() == 3){
-                        setText("H");
-                        setStyle("-fx-background-color: red");
+
+                        ImageView i = new ImageView(new Image("HighPriority.png"));
+                        i.setFitHeight(20);
+                        i.setFitWidth(20);
+                        setAlignment(Pos.CENTER);
+                        setGraphic(i);
+
                     }
                 }
             }
@@ -154,7 +169,7 @@ public class CustomTableColumn extends TableColumn {
      * @param typeOfDate - what sort of date the column will contain, either deadline og finishdate
      */
     private void dateColumnCreator(String typeOfDate){
-        super.setPrefWidth(75);
+        super.setPrefWidth(85);
         super.setResizable(false);
         super.setReorderable(false);
 
@@ -168,7 +183,7 @@ public class CustomTableColumn extends TableColumn {
                     setStyle("");
                 } else { //If the cell is not empty
                     Task task = getTableView().getItems().get(getIndex());
-                    if(typeOfDate.equalsIgnoreCase("deadline")){
+                    if(typeOfDate.equalsIgnoreCase("Deadline")){
                         LocalDateTime taskDeadline = task.getDeadline();
                         if(taskDeadline == null){
                             setText("No deadline");
@@ -178,6 +193,7 @@ public class CustomTableColumn extends TableColumn {
                             setText(textDate+"\n"+textTime);
 
                             if(taskDeadline.isBefore(LocalDateTime.now())){
+                                setText("! "+textDate+"\n"+textTime);
                                 setTextFill(Color.RED);
                                 Tooltip tooltip = new Tooltip("Deadline has passed");
                                 tooltip.setShowDelay(Duration.millis(200));
@@ -185,7 +201,7 @@ public class CustomTableColumn extends TableColumn {
                             }
                         }
 
-                    }else if(typeOfDate.equalsIgnoreCase("finishdate")){
+                    }else if(typeOfDate.equalsIgnoreCase("Finish date")){
                         LocalDateTime taskFinishDate = task.getFinishDate();
 
                         String textDate = taskFinishDate.getDayOfMonth()+"/"+taskFinishDate.getMonthValue()+"/"+taskFinishDate.getYear();
