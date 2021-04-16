@@ -25,7 +25,7 @@ public class CustomTableColumn extends TableColumn {
         this.app = app;
         if(checkboxColumn){
             checkBoxColumnCreator();
-        }else if(!checkboxColumn){
+        }else{
             priorityColumnCreator();
         }
     }
