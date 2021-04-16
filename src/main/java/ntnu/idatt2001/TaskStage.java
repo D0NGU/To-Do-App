@@ -8,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -102,13 +103,13 @@ public class TaskStage extends Stage {
 
         //which buttons are added to the gridpane
         if (mode == Mode.NEW) {
-            gpTaskPane.add(addButton, 5, 8);
-            gpTaskPane.add(cancelButton, 1, 8);
+            gpTaskPane.add(addButton, 5, 9);
+            gpTaskPane.add(cancelButton, 1, 9);
             GridPane.setHalignment(addButton, HPos.RIGHT);
             GridPane.setHalignment(cancelButton, HPos.LEFT);
         } else if (mode == Mode.VIEW) {
-            gpTaskPane.add(saveButton, 5, 8);
-            gpTaskPane.add(deleteButton, 1, 8);
+            gpTaskPane.add(saveButton, 5, 9);
+            gpTaskPane.add(deleteButton, 1, 9);
             GridPane.setHalignment(saveButton, HPos.RIGHT);
             GridPane.setHalignment(deleteButton, HPos.LEFT);
 
@@ -119,7 +120,13 @@ public class TaskStage extends Stage {
             startDateTime.setText(existingTask.getStartDate().toLocalTime().format(timeFormat));
             startDateDate.setValue(existingTask.getStartDate().toLocalDate());
             statusChoiceBox.setValue(existingTask.getStatus());
+            if(existingTask.getStatus().equals("done")) {
+                textFinishDateTime = existingTask.getFinishDate().getDayOfMonth() + "/" + existingTask.getFinishDate().getMonthValue() + "/" + existingTask.getFinishDate().getYear() + " " +
+                        existingTask.getFinishDate().getHour() + ":" + new DecimalFormat("00").format(existingTask.getFinishDate().getMinute());
 
+            }else if(!existingTask.getStatus().equals("done")){
+                textFinishDateTime = "Not Finished";
+            }
             if(existingTask.getDeadline() == null){
                 deadlineDate.setPromptText("No deadline");
             }else{
@@ -138,16 +145,22 @@ public class TaskStage extends Stage {
 
         //gpTaskPane.add(outsideBox, 0, 0, 7, 10);
         gpTaskPane.add(taskNameField, 1, 1, 5, 1);
-        gpTaskPane.add(taskDescriptionField, 2, 6, 4, 2);
-        gpTaskPane.add(new Label("Description:"), 1, 6);
+        gpTaskPane.add(taskDescriptionField, 2, 7, 4, 2);
+        gpTaskPane.add(new Label("Description:"), 1, 7);
         gpTaskPane.add(new Label("Deadline:"), 1, 4);
         gpTaskPane.add(deadlineDate, 2, 4);
+        gpTaskPane.add(new Label("Finish Date:"),1,5);
+        if(mode == Mode.NEW){
+            gpTaskPane.add(new Label("Not Finished"),2,5);
+        } else if(mode == Mode.VIEW){
+            gpTaskPane.add(new Label(textFinishDateTime),2,5);
+        }
         gpTaskPane.add(deadlineTime, 3, 4);
         gpTaskPane.add(new Label("Startdate"), 1, 3);
         gpTaskPane.add(startDateDate, 2, 3);
         gpTaskPane.add(startDateTime, 3, 3);
-        gpTaskPane.add(new Label("Category:"), 1, 5);
-        gpTaskPane.add(taskCategoryField, 2, 5);
+        gpTaskPane.add(new Label("Category:"), 1, 6);
+        gpTaskPane.add(taskCategoryField, 2, 6);
         gpTaskPane.add(new Label("Priority:"), 4, 3);
         gpTaskPane.add(priorityChoiceBox, 5, 3);
         gpTaskPane.add(new Label("Status:"), 4, 4);
