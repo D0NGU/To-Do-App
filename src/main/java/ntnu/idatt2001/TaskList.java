@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
  */
 public class TaskList implements java.io.Serializable{
     private ArrayList<Task> allTasks;
+    private String titleName;
 
     /**
      * constructor that creates a new tasklist
      */
     public TaskList() {
         allTasks = new ArrayList<>();
+        titleName = "To-Do List";
     }
 
     /**
@@ -29,6 +31,22 @@ public class TaskList implements java.io.Serializable{
      */
     public ArrayList<Task> getAllTasks() {
         return allTasks;
+    }
+
+    /**
+     *
+     * @return the name of the title to the app
+     */
+    public String getTitleName(){
+        return titleName;
+    }
+
+    /**
+     * Takes in a parameter title and sets the titleName to the given title
+     * @param title sets the given title as the title to the app
+     */
+    public void setTitleName(String title){
+        titleName = title;
     }
 
     /**
