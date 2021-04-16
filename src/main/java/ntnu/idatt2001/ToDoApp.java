@@ -36,6 +36,7 @@ public class ToDoApp extends Application {
     ComboBox sortBy;
 
     TaskStage stage2;
+    TitleStage stageTitle;
 
     //to run the application
     public static void main(String[] args) {
@@ -57,43 +58,56 @@ public class ToDoApp extends Application {
         Scene mainScene = new Scene(pane, 1400, 600);
 
         //adding paddings for the visuals (more space between layoutpane and its content)
-        gpTop.setPadding(new Insets(0, 0, 0, 10));
         gpTaskList.setPadding(new Insets(10, 10, 10, 10));
         gpCategory.setPadding(new Insets(50, 20, 20, 20));
         gpAddTask.setPadding(new Insets(10, 10, 10, 10));
         gpViewTask.setPadding(new Insets(10, 10, 10, 10));
 
         //adding the spacing between all contents inn the gridpanes
-        gpAddTask.setHgap(13);
-        gpAddTask.setVgap(6);
         gpTop.setHgap(13);
         gpTop.setVgap(6);
-        gpViewTask.setHgap(13);
-        gpViewTask.setVgap(6);
+        gpTaskList.setHgap(13);
+        gpTaskList.setVgap(6);
 
         //adding the title
         Text title = new Text("To-Do list");
         title.setFont(Font.font("Tohoma", FontWeight.EXTRA_BOLD, 40));
 
-        //adding two buttons
+
+        //adding three buttons
         Button addTask = new Button("Add Task");
         addTask.setStyle("-fx-background-color: #a3ffb3");
         sortBy = new ComboBox();
         sortBy.getItems().addAll("Deadline","Priority");
         sortBy.setPromptText("Sort tasks by");
-        sortBy.setStyle("-fx-background-color: #86cffc");
+
+        //set edit title button to an image
+        Button setTitle = new Button();
+        ImageView editImage = new ImageView(new Image("editTitle.png"));
+        editImage.setFitHeight(15);
+        editImage.setFitWidth(15);
+        setTitle.setGraphic(editImage);
+        setTitle.getStyleClass().add("title-edit-button");
+
+        //information to show on hover over for edit button
+        Tooltip tooltip = new Tooltip("Edit title");
+        tooltip.setShowDelay(Duration.millis(200));
+        setTitle.setTooltip(tooltip);
 
         //adding the buttons and title to their gridpane
-        gpTop.add(title, 0, 0, 2, 1);
-        gpTop.add(addTask, 3, 1);
-        gpTop.add(sortBy, 4, 1);
+        gpTop.add(title, 1, 1, 2, 2);
+        gpTop.add(setTitle,3,1);
+        //gpTop.add(addTask, 3, 2);
+        //gpTop.add(sortBy, 4, 2);
+        gpTaskList.add(addTask,1,0);
+        gpTaskList.add(sortBy,2,0);
 
         //creating the table for the to do list
         tableViewToDo = new TableView();
         //creating the columns in the table
         toDoListColumn = new TableColumn<>("To-do");
-        TableColumn deadlineColumn = new CustomTableColumn("deadline",this);
-        TableColumn taskNameColumn = new TableColumn<>("Task");
+        TableColumn deadlineColumn = new CustomTableColumn("Deadline",this);
+        TableColumn taskNameColumn = new CustomTableColumn("Task", this);
         TableColumn priorityColumn = new CustomTableColumn(false, this);
         TableColumn buttonColumn = new CustomTableColumn("to do","", this);
         //changing the width of each column
@@ -112,7 +126,7 @@ public class ToDoApp extends Application {
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane
-        gpTaskList.add(tableViewToDo, 1, 1);
+        gpTaskList.add(tableViewToDo, 1, 1,2,1);
         //making the table editable
         tableViewToDo.setEditable(true);
 
@@ -140,7 +154,7 @@ public class ToDoApp extends Application {
         //making the table only show the columns that i added
         tableViewDoing.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the todolist table to gridpane
-        gpTaskList.add(tableViewDoing, 2, 1);
+        gpTaskList.add(tableViewDoing, 3, 1);
         //making the table editable
         tableViewDoing.setEditable(true);
 
@@ -167,7 +181,7 @@ public class ToDoApp extends Application {
         //making the table only show the columns that i added
         tableViewDone.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the done table to gridpane
-        gpTaskList.add(tableViewDone, 3, 1);
+        gpTaskList.add(tableViewDone, 4, 1);
         //making the table editable
         tableViewDone.setEditable(true);
 
@@ -191,6 +205,19 @@ public class ToDoApp extends Application {
         data.getAllTasks().stream().forEach( t -> t.getCategory().setShowing(true));
 
         update();
+
+        //edit title button is pressed
+        setTitle.setOnAction(actionEvent ->{
+            stageTitle = new TitleStage(title);
+            stageTitle.setTitle("Edit title name");
+            stageTitle.showAndWait();
+
+            if(stageTitle.getResult() != null){
+                title.setText(stageTitle.getResult());
+                data.setTitleName(stageTitle.getResult());
+            }
+
+        });
 
         //add task button is pressed
         addTask.setOnAction(actionEvent -> {
