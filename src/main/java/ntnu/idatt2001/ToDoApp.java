@@ -52,8 +52,6 @@ public class ToDoApp extends Application {
         GridPane gpTop = new GridPane();
         GridPane gpTaskList = new GridPane();
         GridPane gpCategory = new GridPane();
-        GridPane gpAddTask = new GridPane();
-        GridPane gpViewTask = new GridPane();
 
         Scene mainScene = new Scene(pane, 1400, 600);
 
@@ -118,6 +116,8 @@ public class ToDoApp extends Application {
         taskNameColumn.setReorderable(false);
         //adding the deadline and taskname column to the todolist column to create nested columns
         toDoListColumn.getColumns().addAll(deadlineColumn, priorityColumn, taskNameColumn,buttonColumn);
+        toDoListColumn.setId("TO-DO-HEADER");
+        //toDoListColumn.getStyleClass().add("column-header-top");
         //adding the button columns to the to do table
         //adding all the columns to the table
         tableViewToDo.getColumns().addAll(toDoListColumn);
@@ -133,8 +133,8 @@ public class ToDoApp extends Application {
         //creating the table for the doing list
         tableViewDoing = new TableView();
         doingColumn = new TableColumn<>("Doing");
-        TableColumn deadlineColumn1 = new CustomTableColumn("deadline",this);
-        TableColumn taskNameColumn1 = new TableColumn<>("Task");
+        TableColumn deadlineColumn1 = new CustomTableColumn("Deadline",this);
+        TableColumn taskNameColumn1 = new CustomTableColumn("Task", this);
         TableColumn priorityColumn1 = new CustomTableColumn(false, this);
         TableColumn buttonLeftColumn = new CustomTableColumn("doingLeft","", this);
         TableColumn buttonRightColumn = new CustomTableColumn("doingRight","", this);
@@ -146,6 +146,7 @@ public class ToDoApp extends Application {
         taskNameColumn1.setReorderable(false);
         //adding the deadline and taskname column to the doing column to create nested columns
         doingColumn.getColumns().addAll(deadlineColumn1, priorityColumn1,taskNameColumn1,buttonLeftColumn,buttonRightColumn);
+        //doingColumn.getStyleClass().add("column-header-top");
         //adding the button columns to the doing table
         //adding all the columns to the table
         tableViewDoing.getColumns().addAll(doingColumn);
@@ -161,8 +162,8 @@ public class ToDoApp extends Application {
         //creating the table for done list
         tableViewDone = new TableView();
         doneColumn = new TableColumn<>("Completed");
-        TableColumn finishDateColumn = new CustomTableColumn("finishdate",this);
-        TableColumn taskNameColumn2 = new TableColumn<>("Task");
+        TableColumn finishDateColumn = new CustomTableColumn("Finish date",this);
+        TableColumn taskNameColumn2 = new CustomTableColumn("Task", this);
         TableColumn priorityColumn2 = new CustomTableColumn(false, this);
         TableColumn buttonDoneColumn = new CustomTableColumn("done","", this);
         //changing the width of each column
@@ -173,6 +174,7 @@ public class ToDoApp extends Application {
         taskNameColumn2.setReorderable(false);
         //adding the deadline and taskname column to the done column to create nested columns
         doneColumn.getColumns().addAll(finishDateColumn , priorityColumn2, taskNameColumn2,buttonDoneColumn);
+        //doneColumn.getStyleClass().add("column-header-top");
         //adding the button columns to the done table
         //adding all the columns to the table
         tableViewDone.getColumns().addAll(doneColumn);
@@ -188,6 +190,7 @@ public class ToDoApp extends Application {
         //creating the category table
         tableViewCategory = new TableView();
         TableColumn<Category, String> categoryColumn = new TableColumn<>("Categories");
+        //categoryColumn.getStyleClass().add("column-header-top");
         categoryColumn.setReorderable(false);
         categoryColumn.setResizable(false);
         categoryColumn.setPrefWidth(100);
