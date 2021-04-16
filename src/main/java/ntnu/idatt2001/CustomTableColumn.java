@@ -9,6 +9,12 @@ import javafx.util.Duration;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
+import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 /**
  * class for creating a custom table column (column to hold a button etc.)
  */
@@ -42,6 +48,8 @@ public class CustomTableColumn extends TableColumn {
             dateColumnCreator(typeOfDate);
         }else if(typeOfDate.equalsIgnoreCase("Finish date")){
             dateColumnCreator(typeOfDate);
+        }else if (typeOfDate.equalsIgnoreCase("Task")){
+            taskColumnCreater();
         }
     }
 
@@ -64,6 +72,28 @@ public class CustomTableColumn extends TableColumn {
         else if(typeOfTable.equalsIgnoreCase("done")){
             buttonColumnCreator("done");
         }
+    }
+
+    private void taskColumnCreater(){
+        super.setCellFactory(column -> new TableCell<Task, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty); //This is mandatory
+
+                if (empty) { //If the cell is empty
+                    setText(null);
+                    setStyle("");
+                } else { //If the cell is not empty
+                    Task task = getTableView().getItems().get(getIndex());
+                    setText(task.getName());
+                    setAlignment(Pos.CENTER);
+
+                    Tooltip tooltip = new Tooltip("Double click to view more");
+                    tooltip.setShowDelay(Duration.millis(200));
+                    setTooltip(tooltip);
+                }
+            }
+        });
     }
 
     /**
@@ -117,7 +147,7 @@ public class CustomTableColumn extends TableColumn {
     /**
      * method that creates a new priority column
      */
-    private void priorityColumnCreator(){
+    private void priorityColumnCreator() {
         super.setPrefWidth(20);
         super.setResizable(false);
         super.setReorderable(false);
@@ -230,7 +260,13 @@ public class CustomTableColumn extends TableColumn {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 //button that pushes task to the right
-                Button btn = new Button("->");
+                Button btn = new Button();
+                ImageView rightArrow = new ImageView(new Image("ArrowToRight.png"));
+                rightArrow.setFitHeight(20);
+                rightArrow.setFitWidth(20);
+                btn.setGraphic(rightArrow);
+                btn.getStyleClass().add("arrow-buttons");
+
                 {
                     btn.setOnAction((ActionEvent event) -> {
                         Task data = getTableView().getItems().get(getIndex());
@@ -250,7 +286,13 @@ public class CustomTableColumn extends TableColumn {
                 }
 
                 //button that pushes task to the left
-                Button btn2 = new Button("<-");
+                Button btn2 = new Button();
+                ImageView leftArrow = new ImageView(new Image("ArrowToLeft.png"));
+                leftArrow.setFitHeight(20);
+                leftArrow.setFitWidth(20);
+                btn2.setGraphic(leftArrow);
+                btn2.getStyleClass().add("arrow-buttons");
+
                 {
                     btn2.setOnAction((ActionEvent event) -> {
                         Task data = getTableView().getItems().get(getIndex());
