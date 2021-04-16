@@ -54,6 +54,7 @@ public class ToDoApp extends Application {
         GridPane gpCategory = new GridPane();
 
         Scene mainScene = new Scene(pane, 1400, 600);
+        mainScene.getStylesheets().add("/stylesheet.css");
 
         //adding paddings for the visuals (more space between layoutpane and its content)
         gpTaskList.setPadding(new Insets(10, 10, 10, 10));
@@ -200,7 +201,7 @@ public class ToDoApp extends Application {
         //setting what the values of the columns will be
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         //deciding what size the table will be
-        tableViewCategory.setPrefSize(130, 300);
+        tableViewCategory.setPrefSize(135, 300);
         tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the category table to gridpane
         gpCategory.add(tableViewCategory, 0, 0);
