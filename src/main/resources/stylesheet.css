@@ -1,0 +1,105 @@
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-background-radius:5px 5px 0 0;
+    -fx-border-radius: 5px 5px 0 0;
+    -fx-background-color: none;
+    -fx-border-color: #d9d9d9;
+    /*-fx-border-style: solid;
+    -fx-border-color: "black";
+    -fx-border-width: 2px;*/
+}
+/*
+.table-view .column-header,
+.table-view .column-header-background .filler {
+    -fx-background-color:  #6622CC;
+}*/
+
+.root {
+    -fx-background-color: "white";
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #72c0eb, #3f7eec);
+    -fx-background-radius: 5px 5px 0 0 ;
+    -fx-text-background-color: "white";
+}
+
+.table-view .column-header{
+    -fx-background-color: transparent;
+}
+
+
+.table-row-cell:odd:hover .table-cell{
+    -fx-background-color: "#E3E3E3";
+}
+
+.table-row-cell:even:hover .table-cell{
+    -fx-background-color: "#E3E3E3";
+}
+
+
+.table-row-cell:odd .table-cell{
+    -fx-background-color: "#F7F5F5";
+}
+
+.table-row-cell:even .table-cell{
+    -fx-background-color: "#EBEBEB";
+}
+
+.table-row-cell:odd:empty .table-cell{
+    -fx-background-color: "#F7F5F5";
+}
+
+.table-row-cell:even:empty .table-cell{
+    -fx-background-color: "#EBEBEB";
+}
+
+.table-row-cell:selected .table-cell{
+    -fx-background-color: "#E3E3E3";
+    -fx-text-background-color: "black";
+    -fx-focus-color: transparent;
+}
+
+/*CHECKBOX STYLE*/
+
+.check-box .box{
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 0.5px;
+}
+
+/*BUTTON STYLES*/
+
+.arrow-buttons {
+    -fx-border-color: none;
+    -fx-background-color: none;
+}
+
+.arrow-buttons:selected {
+    -fx-focus-color: transparent;
+}
+
+.title-edit-button {
+    -fx-border-color: none;
+    -fx-background-color: none;
+}
+
+.title-edit-button:selected {
+    -fx-focus-color: transparent;
+}
+
+.combo-box {
+    -fx-background-color: #d9d9d9;
+}
+
+/* .table-view .cell
+"CATEGORY-HEADER"
+"DONE-HEADER"
+"DOING-HEADER"
+"TO-DO-HEADER"*/
+
+
