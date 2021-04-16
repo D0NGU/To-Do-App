@@ -19,6 +19,9 @@ import java.io.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 /**
  * Class for the application "To-Do-App"
@@ -59,8 +62,6 @@ public class ToDoApp extends Application {
         //adding paddings for the visuals (more space between layoutpane and its content)
         gpTaskList.setPadding(new Insets(10, 10, 10, 10));
         gpCategory.setPadding(new Insets(50, 20, 20, 20));
-        gpAddTask.setPadding(new Insets(10, 10, 10, 10));
-        gpViewTask.setPadding(new Insets(10, 10, 10, 10));
 
         //adding the spacing between all contents inn the gridpanes
         gpTop.setHgap(13);
@@ -69,7 +70,7 @@ public class ToDoApp extends Application {
         gpTaskList.setVgap(6);
 
         //adding the title
-        Text title = new Text("To-Do list");
+        Text title = new Text(data.getTitleName());
         title.setFont(Font.font("Tohoma", FontWeight.EXTRA_BOLD, 40));
 
 
@@ -124,6 +125,7 @@ public class ToDoApp extends Application {
         tableViewToDo.getColumns().addAll(toDoListColumn);
         //setting what the values of the columns will be
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
         //making the table only show the columns that i added
         tableViewToDo.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the table to the gridpane

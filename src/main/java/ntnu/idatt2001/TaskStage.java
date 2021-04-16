@@ -37,6 +37,8 @@ public class TaskStage extends Stage {
     private TextField taskCategoryField = new TextField();
     private ChoiceBox<String> priorityChoiceBox = new ChoiceBox<>();
     private ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
+    private String textFinishDateTime;
+
 
     /**
      * Constructor to create a new add task stage
