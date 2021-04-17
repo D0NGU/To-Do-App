@@ -121,11 +121,6 @@ public class ToDoApp extends Application {
         //creating all the tableviews (to do, doing, done and category)
         createTableViews();
 
-        //if one of the rows in one of the tables is clicked on, the method taskOnClick is run
-        tableViewToDo.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "toDo"));
-        tableViewDoing.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "doing"));
-        tableViewDone.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "done"));
-
         //when the user opens the application, all the categories will be showing
         data.getAllTasks().stream().forEach(t -> t.getCategory().setShowing(true));
 
@@ -140,7 +135,6 @@ public class ToDoApp extends Application {
         //setting the scene and showing it
         stage.setScene(mainScene);
         stage.show();
-
     }
 
     /**
@@ -289,6 +283,11 @@ public class ToDoApp extends Application {
         tableViewCategory.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //adding the category table to gridpane
         gpCategory.add(tableViewCategory, 0, 0);
+
+        //if one of the rows in one of the tables is clicked on, the method taskOnClick is run
+        tableViewToDo.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "toDo"));
+        tableViewDoing.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "doing"));
+        tableViewDone.setOnMouseClicked((MouseEvent event) -> mainController.taskOnClick(event, "done"));
     }
 
     /**
