@@ -34,6 +34,15 @@ public class Task implements java.io.Serializable{
         if(name.isBlank()){
             throw new IllegalArgumentException("A task must have a name.");
         }
+        if(status.isBlank()){
+            throw new IllegalArgumentException("A task must have a status.");
+        }
+        if(priority < 1 || priority > 3){
+            throw new IllegalArgumentException("Priority has to be either 1, 2 or 3.");
+        }
+        if(startDate == null){
+            throw new IllegalArgumentException("A task must have a start date.");
+        }
         this.name = name;
         this.status = status;
         this.priority = priority;
@@ -57,6 +66,15 @@ public class Task implements java.io.Serializable{
                 LocalDateTime startDate, Category category) {
         if(name.isBlank()){
             throw new IllegalArgumentException("A task must have a name.");
+        }
+        if(status.isBlank()){
+            throw new IllegalArgumentException("A task must have a status.");
+        }
+        if(priority < 1 || priority > 3){
+            throw new IllegalArgumentException("Priority has to be either 1, 2 or 3.");
+        }
+        if(startDate == null){
+            throw new IllegalArgumentException("A task must have a start date.");
         }
         this.name = name;
         this.status = status;
