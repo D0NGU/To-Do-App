@@ -161,7 +161,7 @@ public class MainController {
         alert.setHeaderText("Failure in adding a task");
         //setting the content that is displayed inside the alert
         String text = "The task already exists, and could therefore not be added. \n \n" +
-                      "Two tasks are the same if they have the same name, description, category, " +
+                      "Two tasks are the same if they have the same name, \n description, category, " +
                       "startdate and deadline.";
         alert.setContentText(text);
         //showing the alert and waiting for the user to respond
