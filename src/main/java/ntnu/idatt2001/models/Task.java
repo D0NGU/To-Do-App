@@ -229,6 +229,8 @@ public class Task implements java.io.Serializable{
         Task task = (Task) o;
         return Objects.equals(name, task.name) &&
                 Objects.equals(description, task.description) &&
+                Objects.equals(startDate, task.startDate) &&
+                Objects.equals(deadline, task.deadline) &&
                 Objects.equals(category, task.category);
     }
 
