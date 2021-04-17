@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.views;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -9,12 +9,11 @@ import javafx.util.Duration;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
-import java.net.URL;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import ntnu.idatt2001.models.Task;
+import ntnu.idatt2001.models.Category;
+
 /**
  * class for creating a custom table column (column to hold a button etc.)
  */
@@ -22,8 +21,8 @@ public class CustomTableColumn extends TableColumn {
     ToDoApp app;
 
     /**
-     * constructor for creating a custom checkbox or priority column
-     * @param checkboxColumn - true if the column is a checkboxcolum
+     * constructor for creating a custom checkbox or priority column without a header name
+     * @param checkboxColumn - true if the column is a checkboxcolumn
      * @param app - the application that uses the method
      */
     public CustomTableColumn(Boolean checkboxColumn, ToDoApp app) {
@@ -37,40 +36,42 @@ public class CustomTableColumn extends TableColumn {
     }
 
     /**
-     * constructor for creating a custom date column
-     * @param typeOfDate - what type of date is shown in the column, either "Deadline" or "Finish date"
+     * constructor for creating a custom date column with a header name
+     * @param typeOfColumn - the column type and also its name
      * @param app - the application that uses the method
      */
-    public CustomTableColumn(String typeOfDate, ToDoApp app){
-        super(typeOfDate);
+    public CustomTableColumn(String typeOfColumn, ToDoApp app){
+        super(typeOfColumn);
         this.app = app;
-        if(typeOfDate.equalsIgnoreCase("Deadline")){
-            dateColumnCreator(typeOfDate);
-        }else if(typeOfDate.equalsIgnoreCase("Finish date")){
-            dateColumnCreator(typeOfDate);
-        }else if (typeOfDate.equalsIgnoreCase("Task")){
-            taskColumnCreater();
+        if(typeOfColumn.equalsIgnoreCase("Deadline")){
+            dateColumnCreator(typeOfColumn);
+        }else if(typeOfColumn.equalsIgnoreCase("Finish date")){
+            dateColumnCreator(typeOfColumn);
+        }else if (typeOfColumn.equalsIgnoreCase("Task")){
+            taskColumnCreator();
+        }else if (typeOfColumn.equalsIgnoreCase("Category")){
+            categoryColumnCreator();
         }
     }
 
     /**
-     * constructor for creating a custom button column
-     * @param typeOfTable - the name of the table that will contain the column (to do, doingLeft, doingRight, done)
-     * @param typeOfColumn -
+     * constructor for creating a custom button column without a header name
+     * @param typeOfTable - the name of the table that will contain the column (to do, doing, done)
+     * @param typeOfColumn - what type of column (ex. button left = button that pushes task to the left table)
      * @param app - the application that uses the method
      */
     public CustomTableColumn(String typeOfTable, String typeOfColumn, ToDoApp app){
         super();
         this.app = app;
         if(typeOfTable.equalsIgnoreCase("to do")){
-            buttonColumnCreator("to do");
-        }else if(typeOfTable.equalsIgnoreCase("doingLeft")){
-            buttonColumnCreator("doingLeft");
-        }else if(typeOfTable.equalsIgnoreCase("doingRight")){
-            buttonColumnCreator("doingRight");
+            buttonColumnCreator( "right");
+        }else if(typeOfTable.equalsIgnoreCase("doing") && typeOfColumn.equalsIgnoreCase("buttonLeft")){
+            buttonColumnCreator("left");
+        }else if(typeOfTable.equalsIgnoreCase("doing") && typeOfColumn.equalsIgnoreCase("buttonRight")){
+            buttonColumnCreator("right");
         }
         else if(typeOfTable.equalsIgnoreCase("done")){
-            buttonColumnCreator("done");
+            buttonColumnCreator("left");
         }
     }
 
@@ -97,17 +98,24 @@ public class CustomTableColumn extends TableColumn {
         });
     }
 
-    private void taskColumnCreater(){
+    private void taskColumnCreator(){
+        //changing the width of the column
+        super.setPrefWidth(170);
+        //making it so that the user cant move the columns around or resize the
+        super.setResizable(false);
+        super.setReorderable(false);
+        //deciding what the cells in this column will contain
         super.setCellFactory(column -> new TableCell<Task, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty); //This is mandatory
+                super.updateItem(item, empty);
 
                 if (empty) { //If the cell is empty
                     setText(null);
                     setStyle("");
                 } else { //If the cell is not empty
                     Task task = getTableView().getItems().get(getIndex());
+                    setTextFill(Color.BLACK);
                     setText(task.getName());
                     setAlignment(Pos.CENTER);
 
@@ -123,11 +131,12 @@ public class CustomTableColumn extends TableColumn {
      * method that creates a new checkbox column
      */
     private void checkBoxColumnCreator(){
-        //the table that will contain the checkbox
+        //changing the width of the column
         super.setPrefWidth(30);
-        //making it not possible for user to resize the column or reorder it
+        //making it so that the user cant move the columns around or resize the
         super.setResizable(false);
         super.setReorderable(false);
+        //deciding what the cells in this column will contain
         super.setCellFactory(column -> new TableCell<Category, Void>() {
 
             @Override
@@ -171,14 +180,16 @@ public class CustomTableColumn extends TableColumn {
      * method that creates a new priority column
      */
     private void priorityColumnCreator() {
+        //changing the width of the column
         super.setPrefWidth(20);
+        //making it so that the user cant move the columns around or resize the
         super.setResizable(false);
         super.setReorderable(false);
-
+        //deciding what the cells in this column will contain
         super.setCellFactory(column -> new TableCell<Task, Void>() {
             @Override
             protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty); //This is mandatory
+                super.updateItem(item, empty);
 
                 if (empty) { //If the cell is empty
                     setText(null);
@@ -222,14 +233,16 @@ public class CustomTableColumn extends TableColumn {
      * @param typeOfDate - what sort of date the column will contain, either deadline og finishdate
      */
     private void dateColumnCreator(String typeOfDate){
+        //changing the width of the column
         super.setPrefWidth(85);
+        //making it so that the user cant move the columns around or resize the
         super.setResizable(false);
         super.setReorderable(false);
-
+        //deciding what the cells in this column will contain
         super.setCellFactory(column -> new TableCell<Task, Void>() {
             @Override
             protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty); //This is mandatory
+                super.updateItem(item, empty);
 
                 if (empty) { //If the cell is empty
                     setText(null);
@@ -273,28 +286,29 @@ public class CustomTableColumn extends TableColumn {
 
     /**
      * method to create a new button column
-     * @param tableName - the name of the table that will contain the column (to do, doingLeft, doingRight, done)
+     * @param direction - what direction the button will push the task
      */
-    private void buttonColumnCreator(String tableName){
+    private void buttonColumnCreator(String direction){
+        //changing the width of the column
         super.setPrefWidth(40);
         //making it not possible for user to resize the column or reorder it
         super.setResizable(false);
         super.setReorderable(false);
-
+        //deciding what the cells in this column will contain
         super.setCellFactory(column -> new TableCell<Task, Void>() {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 //button that pushes task to the right
-                Button btn = new Button();
+                Button btnRight = new Button();
                 ImageView rightArrow = new ImageView(new Image("ArrowToRight.png"));
                 rightArrow.setFitHeight(20);
                 rightArrow.setFitWidth(20);
-                btn.setGraphic(rightArrow);
-                btn.getStyleClass().add("arrow-buttons");
+                btnRight.setGraphic(rightArrow);
+                btnRight.getStyleClass().add("arrow-buttons");
 
                 {
-                    btn.setOnAction((ActionEvent event) -> {
+                    btnRight.setOnAction((ActionEvent event) -> {
                         Task data = getTableView().getItems().get(getIndex());
                         //checking what status the task is in, so that the status can be changed correctly
                         //after clicking the -> button
@@ -308,19 +322,19 @@ public class CustomTableColumn extends TableColumn {
                     });
                     Tooltip tooltip = new Tooltip("Move task to right");
                     tooltip.setShowDelay(Duration.millis(300));
-                    btn.setTooltip(tooltip);
+                    btnRight.setTooltip(tooltip);
                 }
 
                 //button that pushes task to the left
-                Button btn2 = new Button();
+                Button btnLeft = new Button();
                 ImageView leftArrow = new ImageView(new Image("ArrowToLeft.png"));
                 leftArrow.setFitHeight(20);
                 leftArrow.setFitWidth(20);
-                btn2.setGraphic(leftArrow);
-                btn2.getStyleClass().add("arrow-buttons");
+                btnLeft.setGraphic(leftArrow);
+                btnLeft.getStyleClass().add("arrow-buttons");
 
                 {
-                    btn2.setOnAction((ActionEvent event) -> {
+                    btnLeft.setOnAction((ActionEvent event) -> {
                         Task data = getTableView().getItems().get(getIndex());
                         //checking what status the task is in, so that the status can be changed correctly
                         //after clicking the <- button
@@ -334,17 +348,17 @@ public class CustomTableColumn extends TableColumn {
                     });
                     Tooltip tooltip = new Tooltip("Move task to left");
                     tooltip.setShowDelay(Duration.millis(300));
-                    btn2.setTooltip(tooltip);
+                    btnLeft.setTooltip(tooltip);
                 }
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    //adding the -> button to only to do and doing column
-                    if(tableName.equals("to do") || tableName.equals("doingRight")){
-                        setGraphic(btn);
-                        //adding the <- button to only doing and done column
-                    }else if(tableName.equals("doingLeft") || tableName.equals("done")){
-                        setGraphic(btn2);
+                    //adding the -> button to the columns that will push the task to the right
+                    if(direction.equals("right")){
+                        setGraphic(btnRight);
+                        //adding the <- button to the columns that will push the task to the left
+                    }else if(direction.equals("left")){
+                        setGraphic(btnLeft);
                     }
                 }
             }
