@@ -4,15 +4,7 @@
     -fx-border-radius: 5px 5px 0 0;
     -fx-background-color: none;
     -fx-border-color: #d9d9d9;
-    /*-fx-border-style: solid;
-    -fx-border-color: "black";
-    -fx-border-width: 2px;*/
 }
-/*
-.table-view .column-header,
-.table-view .column-header-background .filler {
-    -fx-background-color:  #6622CC;
-}*/
 
 .root {
     -fx-background-color: "white";
@@ -41,7 +33,6 @@
     -fx-background-color: "#E3E3E3";
 }
 
-
 .table-row-cell:odd .table-cell{
     -fx-background-color: "#F7F5F5";
 }
@@ -60,19 +51,14 @@
 
 .table-row-cell:selected .table-cell{
     -fx-background-color: "#E3E3E3";
-    -fx-text-background-color: "black";
     -fx-focus-color: transparent;
 }
-
-/*CHECKBOX STYLE*/
 
 .check-box .box{
     -fx-background-color: white;
     -fx-border-color: black;
     -fx-border-width: 0.5px;
 }
-
-/*BUTTON STYLES*/
 
 .arrow-buttons {
     -fx-border-color: none;
@@ -96,10 +82,5 @@
     -fx-background-color: #d9d9d9;
 }
 
-/* .table-view .cell
-"CATEGORY-HEADER"
-"DONE-HEADER"
-"DOING-HEADER"
-"TO-DO-HEADER"*/
 
 
