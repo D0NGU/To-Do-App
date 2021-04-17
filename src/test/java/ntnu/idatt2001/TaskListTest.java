@@ -1,5 +1,8 @@
 package ntnu.idatt2001;
 
+import ntnu.idatt2001.models.Category;
+import ntnu.idatt2001.models.Task;
+import ntnu.idatt2001.models.TaskList;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
