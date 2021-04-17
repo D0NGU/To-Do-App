@@ -1,4 +1,4 @@
-module ntnu.idatt2001 {
+module ntnu.idatt2001.views {
     requires javafx.controls;
-    exports ntnu.idatt2001;
+    exports ntnu.idatt2001.views;
 }
