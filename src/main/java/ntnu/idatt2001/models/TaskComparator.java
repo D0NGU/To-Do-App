@@ -1,6 +1,7 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.models;
 
-import java.time.LocalDateTime;
+import ntnu.idatt2001.models.Task;
+
 import java.util.Comparator;
 
 public class TaskComparator implements Comparator<Task> {
