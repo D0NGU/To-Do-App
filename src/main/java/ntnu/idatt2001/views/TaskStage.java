@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.views;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import ntnu.idatt2001.models.Category;
+import ntnu.idatt2001.models.Task;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -14,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
 
 /**
  * class that represents one task stage
@@ -154,8 +155,10 @@ public class TaskStage extends Stage {
         gpTaskPane.add(new Label("Finish Date:"),1,5);
         if(mode == Mode.NEW){
             gpTaskPane.add(new Label("Not Finished"),2,5);
+            super.setTitle("Add task");
         } else if(mode == Mode.VIEW){
             gpTaskPane.add(new Label(textFinishDateTime),2,5);
+            super.setTitle("Edit task");
         }
         gpTaskPane.add(deadlineTime, 3, 4);
         gpTaskPane.add(new Label("Startdate"), 1, 3);
