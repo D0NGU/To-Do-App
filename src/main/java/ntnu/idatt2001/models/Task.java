@@ -27,7 +27,7 @@ public class Task implements java.io.Serializable{
      * @param deadline - the deadline of the task
      * @param startDate - the startdate of the task
      * @param category - the category of the task
-     * @throws IllegalArgumentException if any of the input is not valid
+     * @throws IllegalArgumentException if any of the input is invalid
      */
     public Task(String name, String status, int priority, String description, LocalDateTime deadline,
                 LocalDateTime startDate, Category category) {
@@ -60,7 +60,7 @@ public class Task implements java.io.Serializable{
      * @param description - the description of the task
      * @param startDate - the startdate of the task
      * @param category - the category of the task
-     * @throws IllegalArgumentException if the any of the input is not valid
+     * @throws IllegalArgumentException if the any of the input is invalid
      */
     public Task(String name, String status, int priority, String description,
                 LocalDateTime startDate, Category category) {
@@ -217,7 +217,7 @@ public class Task implements java.io.Serializable{
 
     /**
      * method that checks whether or not two task objects are the same. They are the same if either:
-     * 1. the task name, description and category are the same
+     * 1. the task name, description, start date, deadline and category are the same
      * 2. both the objects are the same
      * @param o - the other object you want to compare with
      * @return true if the task objects are the same or false if they are not
