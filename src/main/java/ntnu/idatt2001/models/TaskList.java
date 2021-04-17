@@ -1,7 +1,10 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ntnu.idatt2001.models.Category;
+import ntnu.idatt2001.models.Task;
+import ntnu.idatt2001.models.TaskComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
