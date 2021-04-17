@@ -25,7 +25,7 @@
                     <release>${maven.compiler.target}</release>
                     <jlinkImageName>hellofx</jlinkImageName>
                     <launcher>launcher</launcher>
-                    <mainClass>ntnu.idatt2001.ToDoApp</mainClass>
+                    <mainClass>ntnu.idatt2001.views.ToDoApp</mainClass>
                 </configuration>
             </plugin>
             <plugin>
