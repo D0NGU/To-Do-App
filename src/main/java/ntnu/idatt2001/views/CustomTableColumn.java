@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.text.DecimalFormat;
@@ -118,6 +119,10 @@ public class CustomTableColumn extends TableColumn {
                     setTextFill(Color.BLACK);
                     setText(task.getName());
                     setAlignment(Pos.CENTER);
+
+                    if (task.getStatus().equalsIgnoreCase("done")){
+                        getStyleClass().add("cross-out");
+                    }
 
                     Tooltip tooltip = new Tooltip("Double click to view more");
                     tooltip.setShowDelay(Duration.millis(200));

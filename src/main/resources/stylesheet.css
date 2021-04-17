@@ -24,6 +24,9 @@
     -fx-background-color: transparent;
 }
 
+.cross-out .text {
+    -fx-strikethrough: true;
+}
 
 .table-row-cell:odd:hover .table-cell{
     -fx-background-color: "#E3E3E3";
