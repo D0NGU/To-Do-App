@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.views;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class TitleStage extends Stage {
@@ -22,7 +23,9 @@ public class TitleStage extends Stage {
     public String getResult() {
         return result;
     }
+
     private void createStage() {
+        super.initModality(Modality.APPLICATION_MODAL);
         GridPane titlePane = new GridPane();
         titlePane.setHgap(13);
         titlePane.setVgap(6);
