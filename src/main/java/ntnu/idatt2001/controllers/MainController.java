@@ -34,8 +34,10 @@ public class MainController {
         //if the result does not return null, it means the user clicked add task
         Task result = taskStage.getResult();
         if (result != null) {
-            //adding the new task to the list
-            app.getData().addTask(result);
+            //if the addTask method returns false, then the task already exists
+            if(!(app.getData().addTask(result))){
+                showFailedAddTaskDialog();
+            }
         }
 
         //checks if sortby has been picked and sorts after the value
@@ -130,7 +132,7 @@ public class MainController {
      * method to display a delete confirmation
      * @return true if the user confirms to delete the task
      */
-    public boolean showDeleteConfirmationDialog() {
+    private boolean showDeleteConfirmationDialog() {
         boolean deleteConfirmed = false;
 
         //creating a new confirmation alert to check if the user wants to delete the chosen task or not
@@ -147,5 +149,22 @@ public class MainController {
             deleteConfirmed = (result.get() == ButtonType.OK);
         }
         return deleteConfirmed;
+    }
+
+    /**
+     * method to display a dialog box telling the user that the task could not be added
+     */
+    private void showFailedAddTaskDialog(){
+        //creating a new confirmation alert to tell the user that adding task failed
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Failure");
+        alert.setHeaderText("Failure in adding a task");
+        //setting the content that is displayed inside the alert
+        String text = "The task already exists, and could therefore not be added. \n \n" +
+                      "Two tasks are the same if they have the same name, description, category, " +
+                      "startdate and deadline.";
+        alert.setContentText(text);
+        //showing the alert and waiting for the user to respond
+        alert.showAndWait();
     }
 }
