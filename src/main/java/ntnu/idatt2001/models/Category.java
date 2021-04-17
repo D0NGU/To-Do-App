@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.models;
 
 import java.util.Objects;
 
