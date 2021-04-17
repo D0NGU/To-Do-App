@@ -106,13 +106,13 @@ public class TaskStage extends Stage {
 
         //which buttons are added to the gridpane
         if (mode == Mode.NEW) {
-            gpTaskPane.add(addButton, 5, 9);
-            gpTaskPane.add(cancelButton, 1, 9);
+            gpTaskPane.add(addButton, 5, 11);
+            gpTaskPane.add(cancelButton, 1, 11);
             GridPane.setHalignment(addButton, HPos.RIGHT);
             GridPane.setHalignment(cancelButton, HPos.LEFT);
         } else if (mode == Mode.VIEW) {
-            gpTaskPane.add(saveButton, 5, 9);
-            gpTaskPane.add(deleteButton, 1, 9);
+            gpTaskPane.add(saveButton, 5, 11);
+            gpTaskPane.add(deleteButton, 1, 11);
             GridPane.setHalignment(saveButton, HPos.RIGHT);
             GridPane.setHalignment(deleteButton, HPos.LEFT);
 
@@ -146,8 +146,8 @@ public class TaskStage extends Stage {
             }
         }
 
-        //gpTaskPane.add(outsideBox, 0, 0, 7, 10);
-        gpTaskPane.add(taskNameField, 1, 1, 5, 1);
+        gpTaskPane.add(new Label("Name:*"),1,1);
+        gpTaskPane.add(taskNameField, 2, 1, 5, 1);
         gpTaskPane.add(taskDescriptionField, 2, 7, 4, 2);
         gpTaskPane.add(new Label("Description:"), 1, 7);
         gpTaskPane.add(new Label("Deadline:"), 1, 4);
@@ -161,7 +161,7 @@ public class TaskStage extends Stage {
             super.setTitle("Edit task");
         }
         gpTaskPane.add(deadlineTime, 3, 4);
-        gpTaskPane.add(new Label("Startdate"), 1, 3);
+        gpTaskPane.add(new Label("Startdate:*"), 1, 3);
         gpTaskPane.add(startDateDate, 2, 3);
         gpTaskPane.add(startDateTime, 3, 3);
         gpTaskPane.add(new Label("Category:"), 1, 6);
@@ -170,6 +170,7 @@ public class TaskStage extends Stage {
         gpTaskPane.add(priorityChoiceBox, 5, 3);
         gpTaskPane.add(new Label("Status:"), 4, 4);
         gpTaskPane.add(statusChoiceBox, 5, 4);
+        gpTaskPane.add(new Label("* Indicates required field."),1,10,2,1);
 
         //setting the scene with the gridpane
         Scene taskScene = new Scene(gpTaskPane, 460, 300);
