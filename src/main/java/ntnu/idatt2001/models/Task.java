@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.models;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -27,9 +27,13 @@ public class Task implements java.io.Serializable{
      * @param deadline - the deadline of the task
      * @param startDate - the startdate of the task
      * @param category - the category of the task
+     * @throws IllegalArgumentException if any of the input is not valid
      */
     public Task(String name, String status, int priority, String description, LocalDateTime deadline,
                 LocalDateTime startDate, Category category) {
+        if(name.isBlank()){
+            throw new IllegalArgumentException("A task must have a name.");
+        }
         this.name = name;
         this.status = status;
         this.priority = priority;
@@ -47,9 +51,13 @@ public class Task implements java.io.Serializable{
      * @param description - the description of the task
      * @param startDate - the startdate of the task
      * @param category - the category of the task
+     * @throws IllegalArgumentException if the any of the input is not valid
      */
     public Task(String name, String status, int priority, String description,
                 LocalDateTime startDate, Category category) {
+        if(name.isBlank()){
+            throw new IllegalArgumentException("A task must have a name.");
+        }
         this.name = name;
         this.status = status;
         this.priority = priority;
