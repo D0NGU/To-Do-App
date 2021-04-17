@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -199,6 +198,7 @@ public class ToDoApp extends Application {
         categoryColumn.setPrefWidth(100);
         //adding the columns to the category table
         TableColumn<Category, Void> checkboxColumn = new CustomTableColumn(true, this);
+        //adding the columns to the category table
         tableViewCategory.getColumns().addAll(checkboxColumn, categoryColumn);
         //setting what the values of the columns will be
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
