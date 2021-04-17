@@ -74,6 +74,29 @@ public class CustomTableColumn extends TableColumn {
         }
     }
 
+    private void categoryColumnCreator(){
+        //changing the width of the column
+        super.setPrefWidth(100);
+        //making it so that the user cant move the columns around or resize the
+        super.setReorderable(false);
+        super.setResizable(false);
+        //deciding what the cells in this column will contain
+        super.setCellFactory(column -> new TableCell<Category, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) { //If the cell is empty
+                    setText(null);
+                    setStyle("");
+                } else { //If the cell is not empty
+                    Category category = getTableView().getItems().get(getIndex());
+                    setTextFill(Color.BLACK);
+                    setText(category.getName());
+                }
+            }
+        });
+    }
+
     private void taskColumnCreater(){
         super.setCellFactory(column -> new TableCell<Task, String>() {
             @Override
@@ -217,6 +240,7 @@ public class CustomTableColumn extends TableColumn {
                         LocalDateTime taskDeadline = task.getDeadline();
                         if(taskDeadline == null){
                             setText("No deadline");
+                            setTextFill(Color.BLACK);
                         }else{
                             String textDate = taskDeadline.getDayOfMonth()+"/"+taskDeadline.getMonthValue()+"/"+taskDeadline.getYear();
                             String textTime = taskDeadline.getHour()+":"+new DecimalFormat("00").format(taskDeadline.getMinute());
@@ -228,6 +252,8 @@ public class CustomTableColumn extends TableColumn {
                                 Tooltip tooltip = new Tooltip("Deadline has passed");
                                 tooltip.setShowDelay(Duration.millis(200));
                                 setTooltip(tooltip);
+                            }else{
+                                setTextFill(Color.BLACK);
                             }
                         }
 
