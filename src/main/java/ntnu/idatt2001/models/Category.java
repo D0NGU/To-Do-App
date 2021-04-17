@@ -13,8 +13,12 @@ public class Category implements java.io.Serializable{
     /**
      * constructor that creates a new category
      * @param name - the name of the category
+     * @throws IllegalArgumentException if any of the input is not valid
      */
     public Category(String name){
+        if(name.isBlank()){
+            throw new IllegalArgumentException("A category must have a name.");
+        }
         this.name = name;
         isShowing = true;
     }
