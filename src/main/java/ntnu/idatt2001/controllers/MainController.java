@@ -2,10 +2,15 @@ package ntnu.idatt2001.controllers;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import ntnu.idatt2001.models.*;
 import ntnu.idatt2001.views.*;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 /**
@@ -77,6 +82,29 @@ public class MainController {
             //updating the application to show the updated information
             app.update();
         }
+    }
+
+    public void helpButton(){
+        //defines the hyperlink and alert box
+        Hyperlink helpLink = new Hyperlink("Link to the user manual");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help and info");
+        //sets the header of the alert box
+        alert.setHeaderText("Version: 1.0-SNAPSHOT\n"
+                            + "Creators: Cohort 2, group 6");
+        //sets the content of alert box to the hyperlink
+        alert.getDialogPane().setContent(helpLink);
+        //opens the user manual when the hyperlink is pressed
+        helpLink.setOnAction(actionEvent -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://gitlab.stud.idi.ntnu.no/mathangp/group-project-to-do-app/-/wikis/Home/System%20documentation/User%20manual"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+        alert.showAndWait();
     }
 
     /**
