@@ -240,7 +240,7 @@ public class Task implements java.io.Serializable{
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, category);
+        return Objects.hash(name, description, startDate, deadline, category);
     }
 
     /**
