@@ -77,6 +77,11 @@
     -fx-background-color: none;
 }
 
+.help-button {
+    -fx-border-color: none;
+    -fx-background-color: none;
+}
+
 .title-edit-button:selected {
     -fx-focus-color: transparent;
 }
