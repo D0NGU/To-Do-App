@@ -4,11 +4,14 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -112,11 +115,29 @@ public class ToDoApp extends Application {
         //edit title button is pressed
         setTitle.setOnAction(actionEvent -> mainController.editTitle());
 
+
+        //creating help button
+        Button helpButton = new Button();
+        ImageView helpImage = new ImageView(new Image("helpAndInfo.png"));
+        helpImage.setFitHeight(25);
+        helpImage.setFitWidth(25);
+        helpButton.setGraphic(helpImage);
+        Tooltip helpButtonToolTip = new Tooltip("Help and info");
+        helpButtonToolTip.setShowDelay(Duration.millis(200));
+        helpButton.setTooltip(helpButtonToolTip);
+        helpButton.getStyleClass().add("help-button");
+        //help and info button is pressed
+        helpButton.setOnAction(actionEvent -> mainController.helpButton());
+
+        //adds the help and info button to the main screen
+
+
         //adding the buttons and title to their gridpane
         gpTop.add(title, 1, 1, 2, 2);
         gpTop.add(setTitle, 3, 1);
         gpTaskList.add(addTask, 1, 0);
         gpTaskList.add(sortBy, 2, 0);
+        gpTaskList.add(helpButton,5,0);
 
         //creating all the tableviews (to do, doing, done and category)
         createTableViews();
