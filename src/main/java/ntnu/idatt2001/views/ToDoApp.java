@@ -298,7 +298,7 @@ public class ToDoApp extends Application {
     public void stop() throws Exception {
         //Serializing the TaskList object "data" when application stops
         //In other words: saving all the information in TaskList object to a file
-        try (FileOutputStream outputStream = new FileOutputStream("data.ser");
+        try (FileOutputStream outputStream = new FileOutputStream("src/main/resources/data.ser");
              ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(data);
         } catch (IOException ioe) {
@@ -316,7 +316,7 @@ public class ToDoApp extends Application {
     @Override
     public void init() throws Exception {
         //Opening the file containing the serialized TaskList object when the application starts
-        try (FileInputStream inputStream = new FileInputStream("data.ser");
+        try (FileInputStream inputStream = new FileInputStream("src/main/resources/data.ser");
              ObjectInputStream in = new ObjectInputStream(inputStream)) {
             data = (TaskList) in.readObject();
         } catch (FileNotFoundException e) {
