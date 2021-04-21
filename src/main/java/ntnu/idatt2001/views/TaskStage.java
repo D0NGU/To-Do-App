@@ -174,6 +174,7 @@ public class TaskStage extends Stage {
 
         //setting the scene with the gridpane
         Scene taskScene = new Scene(gpTaskPane, 460, 300);
+        taskScene.getStylesheets().add("/stylesheet.css");
         super.setScene(taskScene);
         super.initModality(Modality.APPLICATION_MODAL);
 
