@@ -100,7 +100,7 @@ public class TaskStage extends Stage {
         Button cancelButton = new Button("Cancel");
         cancelButton.setStyle("-fx-background-color: tomato");
         Button saveButton = new Button("Save");
-        saveButton.setStyle("-fx-background-color: lightgreen");
+        saveButton.setStyle("-fx-background-color: #a3ffb3");
         Button deleteButton = new Button("Delete");
         deleteButton.setStyle("-fx-background-color: tomato");
 
