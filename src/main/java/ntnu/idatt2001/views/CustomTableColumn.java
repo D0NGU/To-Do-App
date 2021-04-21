@@ -315,7 +315,7 @@ public class CustomTableColumn extends TableColumn {
      */
     private void buttonColumnCreator(String direction){
         //changing the width of the column
-        super.setPrefWidth(40);
+        super.setPrefWidth(60);
         //making it not possible for user to resize the column or reorder it
         super.setResizable(false);
         super.setReorderable(false);
