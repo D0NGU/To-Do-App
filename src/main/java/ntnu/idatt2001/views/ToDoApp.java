@@ -90,7 +90,7 @@ public class ToDoApp extends Application {
 
         //adding the add task button
         Button addTask = new Button("Add Task");
-        addTask.setStyle("-fx-background-color: #a3ffb3");
+        addTask.setStyle("-fx-background-color: #62a36d");
         //add task button is pressed
         addTask.setOnAction(actionEvent -> mainController.addTask());
 

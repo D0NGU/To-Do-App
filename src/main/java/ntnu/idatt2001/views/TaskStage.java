@@ -96,13 +96,13 @@ public class TaskStage extends Stage {
 
         //adding and styling all the buttons
         Button addButton = new Button("Add");
-        addButton.setStyle("-fx-background-color: #a3ffb3");
+        addButton.setStyle("-fx-background-color: #62a36d");
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyle("-fx-background-color: tomato");
+        cancelButton.setStyle("-fx-background-color: #ff5f42");
         Button saveButton = new Button("Save");
-        saveButton.setStyle("-fx-background-color: #a3ffb3");
+        saveButton.setStyle("-fx-background-color: #62a36d");
         Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: tomato");
+        deleteButton.setStyle("-fx-background-color: #ff5f42");
 
         //which buttons are added to the gridpane
         if (mode == Mode.NEW) {
