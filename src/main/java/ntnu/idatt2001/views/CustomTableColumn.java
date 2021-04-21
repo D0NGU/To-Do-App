@@ -286,7 +286,7 @@ public class CustomTableColumn extends TableColumn {
                                 //its something special about this deadline
                                 setText("! "+textDate+"\n"+textTime);
                                 //setting the color of the text to red
-                                setTextFill(Color.RED);
+                                setStyle("-fx-text-fill: #ad0606");
                                 //adding a tooltip explaining the meaning of the red color and "!"
                                 Tooltip tooltip = new Tooltip("Deadline has passed");
                                 tooltip.setShowDelay(Duration.millis(200));
