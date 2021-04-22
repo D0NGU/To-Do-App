@@ -47,6 +47,7 @@ public class TitleStage extends Stage {
 
         TextField setTitleField = new TextField(existingTitle.getText());
         Button saveTitle = new Button("Save");
+        saveTitle.setStyle("-fx-background-color: #62a36d");
         Text write = new Text("Edit the title here: ");
 
         titlePane.add(write, 1,1);
