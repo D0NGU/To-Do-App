@@ -4,6 +4,10 @@ import ntnu.idatt2001.models.Task;
 
 import java.util.Comparator;
 
+/**
+ * Comparator class to sort task
+ * it is need so task without deadline will be placed at the bottom of the list
+ */
 public class TaskComparator implements Comparator<Task> {
     public int compare(Task left, Task right) {
         // compares if left and right is null

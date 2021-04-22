@@ -9,21 +9,35 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * class that represents edit title stage
+ */
 public class TitleStage extends Stage {
 
     private Text existingTitle = null;
     private String result;
 
+    /**
+     * Constructor that creates title stage
+     * @param title -title that is saved from before
+     */
     public TitleStage(Text title){
         super();
         existingTitle = title;
         createStage();
     }
 
+    /**
+     * Method that returns the new title
+     * @return the new title that is saved in createStage() method
+     */
     public String getResult() {
         return result;
     }
 
+    /**
+     * Method that creates the edit title stage
+     */
     private void createStage() {
         super.initModality(Modality.APPLICATION_MODAL);
         GridPane titlePane = new GridPane();
