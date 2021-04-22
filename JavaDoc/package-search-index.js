@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"ntnu.idatt2001.views","l":"ntnu.idatt2001.controllers"},{"m":"ntnu.idatt2001.views","l":"ntnu.idatt2001.models"},{"m":"ntnu.idatt2001.views","l":"ntnu.idatt2001.views"}];updateSearchResults();
