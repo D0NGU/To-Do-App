@@ -1,4 +1,4 @@
-package ntnu.idatt2001;
+package ntnu.idatt2001.models;
 
 import ntnu.idatt2001.models.Category;
 import ntnu.idatt2001.models.Task;
